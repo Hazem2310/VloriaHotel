@@ -7,6 +7,12 @@
 client/node_modules
 client/build
 server/node_modules
+<<<<<<< HEAD
+=======
+node_modules/
+client/node_modules/
+server/node_modules/
+>>>>>>> aeff913ab355642eefdc562924bc6062746b3add
 .env
 # testing
 /coverage
