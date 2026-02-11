@@ -1,17 +1,23 @@
-const express = require("express");
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
+// server/routes/upload.js
+import express from "express";
+import multer from "multer";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const router = express.Router();
 
-// יצירת תיקיית uploads אם לא קיימת
+// fix __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// create uploads folder if not exists
 const uploadsDir = path.join(__dirname, "../uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// הגדרת אחסון multer לתיקיית uploads
+// multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadsDir);
@@ -23,13 +29,14 @@ const storage = multer.diskStorage({
   },
 });
 
-// סינון קבצים (רק תמונות)
+// file filter (images only)
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif/;
   const extname = allowedTypes.test(
     path.extname(file.originalname).toLowerCase(),
   );
   const mimetype = allowedTypes.test(file.mimetype);
+
   if (extname && mimetype) {
     cb(null, true);
   } else {
@@ -39,36 +46,36 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   fileFilter,
 });
 
-// Middleware עם טיפול בשגיאות multer
+// middleware
 const uploadMiddleware = (req, res, next) => {
   upload.single("image")(req, res, (err) => {
-    if (err instanceof multer.MulterError) {
-      // שגיאה של multer
-      return res.status(400).json({ success: false, message: err.message });
-    } else if (err) {
-      // שגיאה כללית
-      return res.status(400).json({ success: false, message: err.message });
+    if (err) {
+      return res.status(400).json({
+        success: false,
+        message: err.message,
+      });
     }
     next();
   });
 };
 
+// route
 router.post("/", uploadMiddleware, (req, res) => {
   if (!req.file) {
     return res
       .status(400)
       .json({ success: false, message: "No file uploaded" });
   }
-  const filePath = `/uploads/${req.file.filename}`;
+
   res.json({
     success: true,
     message: "File uploaded successfully",
-    filePath,
+    filePath: `/uploads/${req.file.filename}`,
   });
 });
 
-module.exports = router;
+export default router;

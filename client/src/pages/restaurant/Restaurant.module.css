@@ -1,0 +1,253 @@
+.restaurantPage {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.hero {
+  background: linear-gradient(135deg, #0A1F44 0%, #1a3a6e 100%);
+  color: white;
+  text-align: center;
+  padding: 80px 20px 60px;
+}
+
+.hero h1 {
+  font-size: 48px;
+  margin: 0 0 16px 0;
+  font-weight: 800;
+}
+
+.hero p {
+  font-size: 20px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  display: grid;
+  grid-template-columns: 1fr 450px;
+  gap: 48px;
+}
+
+/* Info Section */
+.infoSection {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.infoCard {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.cardImage {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardContent {
+  padding: 32px;
+}
+
+.cardContent h2 {
+  margin: 0 0 16px 0;
+  font-size: 28px;
+  color: #0A1F44;
+  font-weight: 800;
+}
+
+.cardContent p {
+  color: #6b7280;
+  font-size: 16px;
+  line-height: 1.7;
+  margin: 0 0 24px 0;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+}
+
+.icon {
+  font-size: 20px;
+}
+
+.hours {
+  background: white;
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.hours h3 {
+  margin: 0 0 20px 0;
+  font-size: 24px;
+  color: #0A1F44;
+  font-weight: 800;
+}
+
+.hoursList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hourItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.hourItem span:first-child {
+  color: #0A1F44;
+}
+
+.hourItem span:last-child {
+  color: #6b7280;
+}
+
+/* Reservation Form */
+.reservationSection {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.formCard {
+  background: white;
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.formCard h2 {
+  margin: 0 0 24px 0;
+  font-size: 28px;
+  color: #0A1F44;
+  font-weight: 800;
+}
+
+.successMessage {
+  padding: 16px 20px;
+  background: #d1fae5;
+  color: #065f46;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+  outline: none;
+  border-color: #C6A75E;
+  box-shadow: 0 0 0 3px rgba(198, 167, 94, 0.1);
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #C6A75E 0%, #d4b76e 100%);
+  color: #0A1F44;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(198, 167, 94, 0.25);
+}
+
+.submitBtn:hover {
+  background: linear-gradient(135deg, #d4b76e 0%, #e0c47e 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(198, 167, 94, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .reservationSection {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .hero p {
+    font-size: 16px;
+  }
+
+  .container {
+    padding: 40px 16px;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+  }
+
+  .cardContent,
+  .hours,
+  .formCard {
+    padding: 24px;
+  }
+}

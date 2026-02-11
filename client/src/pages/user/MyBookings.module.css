@@ -1,0 +1,171 @@
+.myBookings {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 60vh;
+}
+
+.myBookings h1 {
+  font-size: 32px;
+  margin-bottom: 30px;
+  color: #1e3a8a;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.noBookings {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.noBookings p {
+  font-size: 18px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.bookingsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.bookingCard {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.bookingCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.bookingImage {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.bookingImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.noImage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.bookingInfo {
+  padding: 20px;
+}
+
+.bookingInfo h3 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  color: #1e3a8a;
+}
+
+.dates {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.dates div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.label {
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+
+.status {
+  padding: 6px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.confirmed {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status.completed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.cancelBtn {
+  width: 100%;
+  padding: 12px;
+  background: #fee2e2;
+  color: #991b1b;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelBtn:hover {
+  background: #ef4444;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .myBookings h1 {
+    font-size: 24px;
+  }
+
+  .bookingsGrid {
+    grid-template-columns: 1fr;
+  }
+}

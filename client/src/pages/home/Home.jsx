@@ -1,5 +1,6 @@
 import styles from "./home.module.css";
 import { Link } from "react-router-dom";
+import ImgUpload from "../../components/imgUpload/ImgUpload";
 
 const Home = () => {
   return (
@@ -49,6 +50,7 @@ const Home = () => {
         <Link to="/rooms" className={styles.btnSecondary}>
           Book Now
         </Link>
+         <ImgUpload />
       </section>
     </div>
   );

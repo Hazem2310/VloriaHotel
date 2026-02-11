@@ -1,0 +1,29 @@
+.languageSwitcher {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.langButton {
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  min-width: 40px;
+}
+
+.langButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.langButton.active {
+  background: white;
+  color: #1e3a8a;
+}

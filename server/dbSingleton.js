@@ -1,27 +1,30 @@
-//be/dbSingleton.js
-import mysql from "mysql";
-// Define a DatabaseSingleton class to manage a single MySQL database connection.
+// server/dbSingleton.js
+import mysql from "mysql2/promise";
+
 class DatabaseSingleton {
-  //   104
   constructor() {
-    // Initialize the database connection configuration in the constructor.
-    this.connection = mysql.createConnection({
+    this.pool = mysql.createPool({
       host: "localhost",
       user: "root",
       password: "",
       database: "veloria_grand_hotel",
+      waitForConnections: true,
+      connectionLimit: 10,
     });
   }
-  // Method for executing SQL queries.
-  query(sql, values, callback) {
-    return this.connection.query(sql, values, callback);
+
+  query(sql, values) {
+    return this.pool.query(sql, values);
   }
-  // Static method to create or return a single instance of the DatabaseSingleton class.
+
+  static instance;
+
   static getInstance() {
-    if (!this.instance) {
-      this.instance = new DatabaseSingleton(); // Corrected instantiation
+    if (!DatabaseSingleton.instance) {
+      DatabaseSingleton.instance = new DatabaseSingleton();
     }
-    return this.instance;
+    return DatabaseSingleton.instance;
   }
 }
-export const dbSingleton = DatabaseSingleton;
+
+export default DatabaseSingleton;
