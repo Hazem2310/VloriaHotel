@@ -4,7 +4,7 @@
 }
 
 .hero {
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
   color: white;
   text-align: center;
   padding: 80px 20px 60px;
@@ -142,7 +142,7 @@
 .bookBtn {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
   color: white;
   border: none;
   border-radius: 12px;
@@ -154,7 +154,7 @@
 
 .bookBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3);
+  box-shadow: 0 6px 20px rgba(167, 146, 119, 0.3);
 }
 
 /* Info Section */
@@ -294,7 +294,7 @@
 .submitBtn {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
   color: white;
   border: none;
   border-radius: 12px;
@@ -306,7 +306,7 @@
 
 .submitBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3);
+  box-shadow: 0 6px 20px rgba(167, 146, 119, 0.3);
 }
 
 /* Responsive */

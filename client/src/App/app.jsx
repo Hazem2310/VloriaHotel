@@ -10,7 +10,7 @@ import Home from "../pages/home/Home";
 import Contact from "../pages/ContactUs/ContactUs";
 import Auth from "../pages/auth/Auth";
 import Rooms from "../pages/rooms/Rooms";
-import RoomDetails from "../pages/user/RoomDetails";
+import RoomDetails from "../pages/rooms/RoomDetails";
 import MyBookings from "../pages/user/MyBookings";
 import Dashboard from "../pages/admin/Dashboard";
 import ManageRooms from "../pages/admin/ManageRooms";

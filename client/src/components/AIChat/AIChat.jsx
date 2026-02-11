@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { aiAPI } from "../../utils/api";
+import { aiAPI } from "../../Api/aiApi";
 import { useLanguage } from "../../context/LanguageContext";
 import styles from "./AIChat.module.css";
 

@@ -268,120 +268,263 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser, registerUser } from "../../Api/userApi";
+import { useAuth } from "../../context/AuthContext";
 import classes from "./auth.module.css";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const { login, register } = useAuth();
 
-  const [isLogin, setIsLogin] = useState(true);
+  const [activeTab, setActiveTab] = useState("login");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [signupData, setSignupData] = useState({
     first_name: "",
     last_name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     phone_number: "",
   });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleLoginChange = (e) => {
+    setLoginData({ ...loginData, [e.target.name]: e.target.value });
+    setError("");
   };
 
-  const handleSubmit = async (e) => {
+  const handleSignupChange = (e) => {
+    setSignupData({ ...signupData, [e.target.name]: e.target.value });
+    setError("");
+  };
+
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const res = await loginUser({
-          email: formData.email,
-          password: formData.password,
-        });
-
-        console.log("LOGIN SUCCESS:", res.data);
-        navigate("/"); // أو dashboard
-      } else {
-        const res = await registerUser(formData);
-        console.log("REGISTER SUCCESS:", res.data);
-        setIsLogin(true);
-      }
+      await login(loginData.email, loginData.password);
+      navigate("/");
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Something went wrong, try again"
+      setError(err.response?.data?.message || "Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignupSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    if (signupData.password !== signupData.confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
+    if (signupData.password.length < 6) {
+      setError("Password must be at least 6 characters");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await register(
+        signupData.first_name,
+        signupData.last_name,
+        signupData.email,
+        signupData.password,
+        signupData.phone_number
       );
+      setSuccess("Account created successfully! Please login.");
+      setSignupData({
+        first_name: "",
+        last_name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        phone_number: "",
+      });
+      setTimeout(() => {
+        setActiveTab("login");
+        setSuccess("");
+      }, 2000);
+    } catch (err) {
+      setError(err.response?.data?.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={classes.authContainer}>
-      <form className={classes.authForm} onSubmit={handleSubmit}>
-        <h2>{isLogin ? "Login" : "Sign Up"}</h2>
+    <div className={classes.authPage}>
+      <div className={classes.authContainer}>
+        <div className={classes.authCard}>
+          {/* Header */}
+          <div className={classes.authHeader}>
+            <div className={classes.brandMark}>V</div>
+            <h1>Veloria Hotel</h1>
+            <p>Welcome to luxury and comfort</p>
+          </div>
 
-        {!isLogin && (
-          <>
-            <input
-              type="text"
-              name="first_name"
-              placeholder="First Name"
-              value={formData.first_name}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="last_name"
-              placeholder="Last Name"
-              value={formData.last_name}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              name="phone_number"
-              placeholder="Phone Number"
-              value={formData.phone_number}
-              onChange={handleChange}
-            />
-          </>
-        )}
+          {/* Tabs */}
+          <div className={classes.tabs}>
+            <button
+              className={`${classes.tab} ${activeTab === "login" ? classes.activeTab : ""}`}
+              onClick={() => {
+                setActiveTab("login");
+                setError("");
+                setSuccess("");
+              }}
+            >
+              Login
+            </button>
+            <button
+              className={`${classes.tab} ${activeTab === "signup" ? classes.activeTab : ""}`}
+              onClick={() => {
+                setActiveTab("signup");
+                setError("");
+                setSuccess("");
+              }}
+            >
+              Sign Up
+            </button>
+          </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
+          {/* Login Form */}
+          {activeTab === "login" && (
+            <form className={classes.authForm} onSubmit={handleLoginSubmit}>
+              <div className={classes.formGroup}>
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={loginData.email}
+                  onChange={handleLoginChange}
+                  required
+                />
+              </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
+              <div className={classes.formGroup}>
+                <label>Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  value={loginData.password}
+                  onChange={handleLoginChange}
+                  required
+                />
+              </div>
 
-        {error && <p className={classes.error}>{error}</p>}
+              {error && <div className={classes.errorMessage}>{error}</div>}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Please wait..." : isLogin ? "Login" : "Sign Up"}
-        </button>
+              <button type="submit" className={classes.submitBtn} disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
+              </button>
 
-        <p className={classes.switch}>
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
-          <span onClick={() => setIsLogin(!isLogin)}>
-            {isLogin ? " Sign up" : " Login"}
-          </span>
-        </p>
-      </form>
+              <div className={classes.forgotPassword}>
+                <a href="#forgot">Forgot password?</a>
+              </div>
+            </form>
+          )}
+
+          {/* Signup Form */}
+          {activeTab === "signup" && (
+            <form className={classes.authForm} onSubmit={handleSignupSubmit}>
+              <div className={classes.formRow}>
+                <div className={classes.formGroup}>
+                  <label>First Name</label>
+                  <input
+                    type="text"
+                    name="first_name"
+                    placeholder="First name"
+                    value={signupData.first_name}
+                    onChange={handleSignupChange}
+                    required
+                  />
+                </div>
+
+                <div className={classes.formGroup}>
+                  <label>Last Name</label>
+                  <input
+                    type="text"
+                    name="last_name"
+                    placeholder="Last name"
+                    value={signupData.last_name}
+                    onChange={handleSignupChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className={classes.formGroup}>
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={signupData.email}
+                  onChange={handleSignupChange}
+                  required
+                />
+              </div>
+
+              <div className={classes.formGroup}>
+                <label>Phone Number (Optional)</label>
+                <input
+                  type="tel"
+                  name="phone_number"
+                  placeholder="Enter your phone number"
+                  value={signupData.phone_number}
+                  onChange={handleSignupChange}
+                />
+              </div>
+
+              <div className={classes.formGroup}>
+                <label>Password</label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Create a password (min 6 characters)"
+                  value={signupData.password}
+                  onChange={handleSignupChange}
+                  required
+                />
+              </div>
+
+              <div className={classes.formGroup}>
+                <label>Confirm Password</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Confirm your password"
+                  value={signupData.confirmPassword}
+                  onChange={handleSignupChange}
+                  required
+                />
+              </div>
+
+              {error && <div className={classes.errorMessage}>{error}</div>}
+              {success && <div className={classes.successMessage}>{success}</div>}
+
+              <button type="submit" className={classes.submitBtn} disabled={loading}>
+                {loading ? "Creating account..." : "Create Account"}
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

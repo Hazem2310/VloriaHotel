@@ -4,7 +4,7 @@
 }
 
 .hero {
-  background: linear-gradient(135deg, #0A1F44 0%, #1a3a6e 100%);
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
   color: white;
   text-align: center;
   padding: 100px 20px 80px;
@@ -44,28 +44,28 @@
 .filterBtn {
   padding: 14px 32px;
   background: white;
-  border: 2px solid #e5e7eb;
+  border: 2px solid #EAD8C0;
   border-radius: 50px;
   font-weight: 700;
   font-size: 16px;
-  color: #0A1F44;
+  color: #A79277;
   cursor: pointer;
   transition: all 0.3s ease;
   letter-spacing: 0.3px;
 }
 
 .filterBtn:hover {
-  border-color: #C6A75E;
-  color: #C6A75E;
+  border-color: #A79277;
+  color: #A79277;
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(198, 167, 94, 0.2);
+  box-shadow: 0 6px 20px rgba(167, 146, 119, 0.2);
 }
 
 .filterBtn.active {
-  background: linear-gradient(135deg, #C6A75E 0%, #d4b76e 100%);
-  color: #0A1F44;
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
+  color: white;
   border-color: transparent;
-  box-shadow: 0 6px 20px rgba(198, 167, 94, 0.3);
+  box-shadow: 0 6px 20px rgba(167, 146, 119, 0.3);
 }
 
 /* Booking Grid */
@@ -148,7 +148,7 @@
 .cardContent h2 {
   margin: 0 0 16px 0;
   font-size: 28px;
-  color: #0A1F44;
+  color: #A79277;
   font-weight: 800;
   letter-spacing: -0.3px;
 }
@@ -164,8 +164,8 @@
   display: inline-block;
   width: 100%;
   padding: 16px 24px;
-  background: linear-gradient(135deg, #C6A75E 0%, #d4b76e 100%);
-  color: #0A1F44;
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
+  color: white;
   text-align: center;
   text-decoration: none;
   border-radius: 12px;
@@ -173,13 +173,13 @@
   font-size: 17px;
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(198, 167, 94, 0.25);
+  box-shadow: 0 4px 12px rgba(167, 146, 119, 0.25);
 }
 
 .bookButton:hover {
-  background: linear-gradient(135deg, #d4b76e 0%, #e0c47e 100%);
+  background: linear-gradient(135deg, #D1BB9E 0%, #EAD8C0 100%);
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(198, 167, 94, 0.4);
+  box-shadow: 0 8px 20px rgba(167, 146, 119, 0.4);
 }
 
 /* Responsive */

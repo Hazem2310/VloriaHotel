@@ -6,6 +6,11 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "setup-db": "node setup-database.js",
+    "create-tables": "node scripts/createTables.js",
+    "check-db": "node scripts/checkDatabase.js",
+    "seed-rooms": "node scripts/seedRooms.js",
+    "clear-rooms": "node scripts/clearRooms.js",
     "create-admin": "node scripts/createAdmin.js",
     "seed": "node scripts/seedData.js"
   },

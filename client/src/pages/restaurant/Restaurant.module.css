@@ -4,7 +4,7 @@
 }
 
 .hero {
-  background: linear-gradient(135deg, #0A1F44 0%, #1a3a6e 100%);
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
   color: white;
   text-align: center;
   padding: 80px 20px 60px;
@@ -64,7 +64,7 @@
 .cardContent h2 {
   margin: 0 0 16px 0;
   font-size: 28px;
-  color: #0A1F44;
+  color: #A79277;
   font-weight: 800;
 }
 
@@ -193,28 +193,28 @@
 .formGroup select:focus,
 .formGroup textarea:focus {
   outline: none;
-  border-color: #C6A75E;
-  box-shadow: 0 0 0 3px rgba(198, 167, 94, 0.1);
+  border-color: #A79277;
+  box-shadow: 0 0 0 3px rgba(167, 146, 119, 0.1);
 }
 
 .submitBtn {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #C6A75E 0%, #d4b76e 100%);
-  color: #0A1F44;
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
+  color: white;
   border: none;
   border-radius: 12px;
   font-size: 18px;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(198, 167, 94, 0.25);
+  box-shadow: 0 4px 12px rgba(167, 146, 119, 0.25);
 }
 
 .submitBtn:hover {
-  background: linear-gradient(135deg, #d4b76e 0%, #e0c47e 100%);
+  background: linear-gradient(135deg, #D1BB9E 0%, #EAD8C0 100%);
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(198, 167, 94, 0.4);
+  box-shadow: 0 8px 20px rgba(167, 146, 119, 0.4);
 }
 
 /* Responsive */

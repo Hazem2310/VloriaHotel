@@ -3,8 +3,9 @@
   top: 0;
   z-index: 50;
   background: #FFF2E1;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 2px solid #EAD8C0;
   backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(167, 146, 119, 0.1);
 }
 
 .container{
@@ -31,11 +32,11 @@
   display: grid;
   place-items: center;
   border-radius: 12px;
-  background: linear-gradient(135deg, #0f172a, #1f2937);
+  background: linear-gradient(135deg, #A79277, #D1BB9E);
   color: #fff;
   font-weight: 800;
   letter-spacing: 1px;
-  box-shadow: 0 10px 24px rgba(15,23,42,0.18);
+  box-shadow: 0 10px 24px rgba(167, 146, 119, 0.3);
 }
 
 .brandText{
@@ -48,6 +49,7 @@
   font-size: 18px;
   font-weight: 800;
   letter-spacing: 0.3px;
+  color: #A79277;
 }
 
 .brandSub{
@@ -66,7 +68,7 @@
 
 .link{
   text-decoration: none;
-  color: #1f2937;
+  color: #333;
   font-weight: 600;
   font-size: 14px;
   padding: 10px 10px;
@@ -75,7 +77,8 @@
 }
 
 .link:hover{
-  background: rgba(15,23,42,0.06);
+  background: rgba(167, 146, 119, 0.1);
+  color: #A79277;
 }
 
 /* Dropdown Menu */
@@ -170,33 +173,34 @@
   text-decoration: none;
   padding: 10px 14px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #0f172a, #111827);
+  background: linear-gradient(135deg, #A79277, #D1BB9E);
   color: #fff;
   font-weight: 800;
   font-size: 14px;
-  box-shadow: 0 12px 26px rgba(17,24,39,0.18);
+  box-shadow: 0 12px 26px rgba(167, 146, 119, 0.25);
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .primaryBtn:hover{
-  transform: translateY(-1px);
-  box-shadow: 0 16px 34px rgba(17,24,39,0.22);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(167, 146, 119, 0.35);
 }
 
 .secondaryBtn{
   text-decoration: none;
   padding: 10px 14px;
   border-radius: 14px;
-  border: 1px solid rgba(17,24,39,0.18);
+  border: 2px solid #D1BB9E;
   background: rgba(255,255,255,0.55);
-  color: #111827;
+  color: #A79277;
   font-weight: 800;
   font-size: 14px;
   transition: 0.2s ease;
 }
 
 .secondaryBtn:hover{
-  background: rgba(255,255,255,0.8);
+  background: #FFF2E1;
+  border-color: #A79277;
 }
 
 .menuBtn{
@@ -204,8 +208,8 @@
   width: 44px;
   height: 44px;
   border-radius: 14px;
-  border: 1px solid rgba(0,0,0,0.08);
-  background: rgba(255,255,255,0.55);
+  border: 2px solid #D1BB9E;
+  background: rgba(255,255,255,0.8);
   cursor: pointer;
   padding: 10px;
 }
@@ -213,7 +217,7 @@
 .menuLine{
   display: block;
   height: 2px;
-  background: #111827;
+  background: #A79277;
   border-radius: 999px;
   margin: 5px 0;
 }
@@ -229,7 +233,7 @@
 .mobileLink{
   display: block;
   text-decoration: none;
-  color: #111827;
+  color: #333;
   font-weight: 700;
   padding: 12px 12px;
   border-radius: 14px;
@@ -237,7 +241,8 @@
 }
 
 .mobileLink:hover{
-  background: rgba(15,23,42,0.06);
+  background: rgba(167, 146, 119, 0.1);
+  color: #A79277;
 }
 
 .mobileActions{

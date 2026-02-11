@@ -1,0 +1,137 @@
+/* General Amenities Section */
+.amenitiesSection {
+  background: linear-gradient(135deg, #FFF2E1 0%, #EAD8C0 100%);
+  padding: 100px 20px;
+  margin-top: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.amenitiesSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #A79277 0%, #D1BB9E 50%, #A79277 100%);
+}
+
+.amenitiesContainer {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.amenitiesSection h2 {
+  text-align: center;
+  font-size: 48px;
+  margin: 0 0 16px 0;
+  color: #A79277;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(167, 146, 119, 0.1);
+}
+
+.amenitiesSubtitle {
+  text-align: center;
+  font-size: 20px;
+  color: #6b7280;
+  margin: 0 0 64px 0;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.amenitiesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 32px;
+}
+
+.amenityCard {
+  background: white;
+  padding: 40px 28px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(167, 146, 119, 0.12);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.amenityCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #A79277 0%, #D1BB9E 100%);
+  transform: scaleX(0);
+  transition: transform 0.4s ease;
+}
+
+.amenityCard:hover::before {
+  transform: scaleX(1);
+}
+
+.amenityCard:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 16px 40px rgba(167, 146, 119, 0.25);
+  border-color: #D1BB9E;
+}
+
+.amenityIcon {
+  font-size: 56px;
+  display: block;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 4px 8px rgba(167, 146, 119, 0.2));
+  transition: transform 0.4s ease;
+}
+
+.amenityCard:hover .amenityIcon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.amenityCard h4 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  color: #A79277;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.amenityCard p {
+  margin: 0;
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.7;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .amenitiesSection {
+    padding: 60px 16px;
+  }
+
+  .amenitiesSection h2 {
+    font-size: 32px;
+  }
+
+  .amenitiesSubtitle {
+    font-size: 16px;
+  }
+
+  .amenitiesGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .amenityCard {
+    padding: 24px 20px;
+  }
+}

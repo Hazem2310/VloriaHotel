@@ -15,7 +15,10 @@ export const protect = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
-    const [users] = await pool.query("SELECT id, name, email, role FROM users WHERE id = ?", [decoded.id]);
+    const [users] = await pool.query(
+      "SELECT user_id, first_name, last_name, email, role FROM users WHERE user_id = ?",
+      [decoded.id]
+    );
 
     if (users.length === 0) {
       return res.status(401).json({
@@ -24,7 +27,14 @@ export const protect = async (req, res, next) => {
       });
     }
 
-    req.user = users[0];
+    const user = users[0];
+    req.user = {
+      id: user.user_id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      role: user.role,
+    };
     next();
   } catch (error) {
     return res.status(401).json({

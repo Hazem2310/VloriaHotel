@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { reportsAPI } from "../../utils/api";
+import { roomsAPI } from "../../Api/roomsApi";
+import { bookingsAPI } from "../../Api/bookingsApi";
+import { reportsAPI } from "../../Api/reportsApi";
 import { useLanguage } from "../../context/LanguageContext";
 import styles from "./Dashboard.module.css";
 

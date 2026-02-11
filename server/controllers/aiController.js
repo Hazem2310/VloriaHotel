@@ -1,8 +1,13 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai = null;
+
+// Only initialize OpenAI if API key is provided
+if (process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+}
 
 const SYSTEM_PROMPT = `You are the professional AI assistant of Veloria Hotel, a luxury hotel establishment. 
 
@@ -37,10 +42,10 @@ export const chatWithAI = async (req, res) => {
       });
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({
+    if (!openai || !process.env.OPENAI_API_KEY) {
+      return res.status(503).json({
         success: false,
-        message: "AI service is not configured. Please contact support.",
+        message: "AI chat service is currently unavailable. Please contact support for assistance.",
       });
     }
 

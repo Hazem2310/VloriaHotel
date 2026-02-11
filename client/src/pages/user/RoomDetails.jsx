@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { roomsAPI, bookingsAPI } from "../../utils/api";
+import { roomsAPI } from "../../Api/roomsApi";
+import { bookingsAPI } from "../../Api/bookingsApi";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import styles from "./RoomDetails.module.css";

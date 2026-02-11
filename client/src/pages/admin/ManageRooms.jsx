@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { roomsAPI } from "../../utils/api";
+import { roomsAPI } from "../../Api/roomsApi";
 import { useLanguage } from "../../context/LanguageContext";
 import styles from "./ManageRooms.module.css";
 

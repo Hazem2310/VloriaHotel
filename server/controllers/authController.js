@@ -13,16 +13,16 @@ const generateToken = (id) => {
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { first_name, last_name, email, password, phone_number } = req.body;
 
-    if (!name || !email || !password) {
+    if (!first_name || !last_name || !email || !password) {
       return res.status(400).json({
         success: false,
         message: "Please provide all required fields",
       });
     }
 
-    const [existingUsers] = await pool.query("SELECT id FROM users WHERE email = ?", [email]);
+    const [existingUsers] = await pool.query("SELECT user_id FROM users WHERE email = ?", [email]);
 
     if (existingUsers.length > 0) {
       return res.status(400).json({
@@ -35,8 +35,8 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const [result] = await pool.query(
-      "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",
-      [name, email, hashedPassword, "user"]
+      "INSERT INTO users (first_name, last_name, email, password, phone_number, role) VALUES (?, ?, ?, ?, ?, ?)",
+      [first_name, last_name, email, hashedPassword, phone_number || null, "user"]
     );
 
     const token = generateToken(result.insertId);
@@ -53,8 +53,10 @@ export const register = async (req, res) => {
       message: "User registered successfully",
       user: {
         id: result.insertId,
-        name,
+        first_name,
+        last_name,
         email,
+        phone_number,
         role: "user",
       },
     });
@@ -97,7 +99,7 @@ export const login = async (req, res) => {
       });
     }
 
-    const token = generateToken(user.id);
+    const token = generateToken(user.user_id);
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -110,9 +112,11 @@ export const login = async (req, res) => {
       success: true,
       message: "Login successful",
       user: {
-        id: user.id,
-        name: user.name,
+        id: user.user_id,
+        first_name: user.first_name,
+        last_name: user.last_name,
         email: user.email,
+        phone_number: user.phone_number,
         role: user.role,
       },
     });
@@ -139,9 +143,10 @@ export const logout = (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
-    const [users] = await pool.query("SELECT id, name, email, role, created_at FROM users WHERE id = ?", [
-      req.user.id,
-    ]);
+    const [users] = await pool.query(
+      "SELECT user_id, first_name, last_name, email, phone_number, role, created_at FROM users WHERE user_id = ?",
+      [req.user.id]
+    );
 
     if (users.length === 0) {
       return res.status(404).json({
@@ -150,9 +155,18 @@ export const getMe = async (req, res) => {
       });
     }
 
+    const user = users[0];
     res.json({
       success: true,
-      user: users[0],
+      user: {
+        id: user.user_id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        phone_number: user.phone_number,
+        role: user.role,
+        created_at: user.created_at,
+      },
     });
   } catch (error) {
     console.error("Get me error:", error);

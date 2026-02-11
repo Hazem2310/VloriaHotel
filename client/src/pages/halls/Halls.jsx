@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { servicesAPI } from "../../utils/api";
+import { servicesAPI } from "../../Api/servicesApi";
 import { useLanguage } from "../../context/LanguageContext";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./halls.module.css";

@@ -4,10 +4,16 @@ USE veloria_hotel;
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
+  user_id INT AUTO_INCREMENT PRIMARY KEY,
+  first_name VARCHAR(100) NOT NULL,
+  last_name VARCHAR(100) NOT NULL,
   email VARCHAR(150) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
+  phone_number VARCHAR(20),
+  failed_attempts INT DEFAULT 0,
+  reset_token VARCHAR(255),
+  reset_token_expiry DATETIME,
+  status ENUM('active','inactive','banned') DEFAULT 'active',
   role ENUM('user','admin') DEFAULT 'user',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -43,11 +49,11 @@ CREATE TABLE IF NOT EXISTS bookings (
   total_price DECIMAL(10,2) NOT NULL,
   status ENUM('pending','confirmed','completed','cancelled') DEFAULT 'pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
   FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE
 );
 
 -- Insert default admin user (password: admin123)
-INSERT INTO users (name, email, password, role) 
-VALUES ('Admin', 'admin@veloria.com', '$2a$10$XqZ8J5K9X5K9X5K9X5K9XeO5K9X5K9X5K9X5K9X5K9X5K9X5K9X5K', 'admin')
+INSERT INTO users (first_name, last_name, email, password, role) 
+VALUES ('Admin', 'User', 'admin@veloria.com', '$2a$10$XqZ8J5K9X5K9X5K9X5K9XeO5K9X5K9X5K9X5K9X5K9X5K9X5K9X5K', 'admin')
 ON DUPLICATE KEY UPDATE email=email;

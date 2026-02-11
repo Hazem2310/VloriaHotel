@@ -4,7 +4,7 @@
 }
 
 .hero {
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
   color: white;
   text-align: center;
   padding: 80px 20px 60px;
@@ -49,13 +49,13 @@
 }
 
 .categoryBtn:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
+  border-color: #A79277;
+  color: #A79277;
   transform: translateY(-2px);
 }
 
 .categoryBtn.active {
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
   color: white;
   border-color: transparent;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { bookingsAPI } from "../../utils/api";
+import { bookingsAPI } from "../../Api/bookingsApi";
 import { useLanguage } from "../../context/LanguageContext";
 import styles from "./MyBookings.module.css";
 
