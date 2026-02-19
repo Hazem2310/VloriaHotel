@@ -11,6 +11,9 @@ import roomRoutes from "./routes/rooms.js";
 import serviceRoutes from "./routes/services.js";
 import bookingRoutes from "./routes/bookings.js";
 import reportRoutes from "./routes/reports.js";
+import hallRoutes from "./routes/hallRoutes.js";
+import mealRoutes from "./routes/mealRoutes.js";
+import mealPackageRoutes from "./routes/mealPackageRoutes.js";
 import aiRoutes from "./routes/ai.js";
 import uploadRouter from "./routes/upload.js";
 
@@ -36,6 +39,7 @@ app.use(cookieParser());
 
 // static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/upload", express.static(path.join(__dirname, "upload")));
 
 // test database connection
 testConnection();
@@ -45,6 +49,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/halls", hallRoutes);
+app.use("/api/meals", mealRoutes);
+app.use("/api/meal-packages", mealPackageRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/upload", uploadRouter);

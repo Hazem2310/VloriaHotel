@@ -1,0 +1,253 @@
+/* Copy all styles from Rooms page and adapt for Halls */
+@import url('../rooms/Rooms.module.css');
+
+/* Halls-specific overrides and additions */
+.suitableFor {
+  margin-bottom: 20px;
+}
+
+.suitableFor h4 {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #FFF2E1 0%, #EAD8C0 100%);
+  border: 1px solid rgba(167, 146, 119, 0.3);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #A79277;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.featuresList {
+  margin-bottom: 24px;
+}
+
+.featuresList h4 {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rangeInputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rangeInputs input {
+  flex: 1;
+}
+
+.rangeInputs span {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+/* Why Choose Section */
+.whyChooseSection {
+  background: linear-gradient(180deg, #FFF9F0 0%, #FFF2E1 50%, #EAD8C0 100%);
+  padding: 100px 20px;
+  margin-top: 60px;
+}
+
+.whyChooseContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.whyChooseSection h2 {
+  text-align: center;
+  font-size: 48px;
+  margin: 0 0 16px 0;
+  color: #1a1a1a;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 20px;
+  color: #6b7280;
+  margin: 0 0 60px 0;
+  font-weight: 500;
+}
+
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+}
+
+.benefit {
+  text-align: center;
+  padding: 40px 28px;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.benefit:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 50px rgba(167, 146, 119, 0.2);
+}
+
+.benefitIcon {
+  font-size: 56px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 4px 8px rgba(167, 146, 119, 0.2));
+}
+
+.benefit h3 {
+  margin: 0 0 12px 0;
+  font-size: 22px;
+  color: #1a1a1a;
+  font-weight: 800;
+}
+
+.benefit p {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* CTA Section */
+.ctaSection {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 80px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="%23D1BB9E" opacity="0.1"/></svg>');
+  background-size: 2px 2px;
+  opacity: 0.3;
+}
+
+.ctaContent {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.ctaSection h2 {
+  font-size: 48px;
+  margin: 0 0 16px 0;
+  color: white;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.ctaSection p {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 40px 0;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ctaPrimary,
+.ctaSecondary {
+  padding: 18px 40px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.ctaPrimary {
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
+  color: white;
+  border: 2px solid #A79277;
+}
+
+.ctaPrimary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(167, 146, 119, 0.4);
+}
+
+.ctaSecondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.ctaSecondary:hover {
+  background: white;
+  color: #1a1a1a;
+  transform: translateY(-4px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .filters {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 40px;
+  }
+
+  .hero p {
+    font-size: 18px;
+  }
+
+  .hallsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .whyChooseSection h2 {
+    font-size: 32px;
+  }
+
+  .ctaSection h2 {
+    font-size: 36px;
+  }
+
+  .ctaButtons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

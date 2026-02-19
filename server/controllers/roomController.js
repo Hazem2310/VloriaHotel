@@ -2,7 +2,7 @@ import pool from "../config/db.js";
 
 export const getAllRooms = async (req, res) => {
   try {
-    const [rooms] = await pool.query("SELECT * FROM rooms ORDER BY created_at DESC");
+    const [rooms] = await pool.query("SELECT * FROM rooms ORDER BY room_number");
     res.json({
       success: true,
       count: rooms.length,
@@ -19,7 +19,7 @@ export const getAllRooms = async (req, res) => {
 
 export const getRoomById = async (req, res) => {
   try {
-    const [rooms] = await pool.query("SELECT * FROM rooms WHERE id = ?", [req.params.id]);
+    const [rooms] = await pool.query("SELECT * FROM rooms WHERE room_id = ?", [req.params.id]);
 
     if (rooms.length === 0) {
       return res.status(404).json({
@@ -43,9 +43,9 @@ export const getRoomById = async (req, res) => {
 
 export const createRoom = async (req, res) => {
   try {
-    const { title, description, price, capacity, image, is_available } = req.body;
+    const { room_number, room_type, price, capacity, image, status } = req.body;
 
-    if (!title || !description || !price || !capacity) {
+    if (!room_number || !room_type || !price || !capacity) {
       return res.status(400).json({
         success: false,
         message: "Please provide all required fields",
@@ -53,11 +53,11 @@ export const createRoom = async (req, res) => {
     }
 
     const [result] = await pool.query(
-      "INSERT INTO rooms (title, description, price, capacity, image, is_available) VALUES (?, ?, ?, ?, ?, ?)",
-      [title, description, price, capacity, image || "", is_available !== undefined ? is_available : true]
+      "INSERT INTO rooms (room_number, room_type, price, capacity, image, status) VALUES (?, ?, ?, ?, ?, ?)",
+      [room_number, room_type, price, capacity, image || "", status || "AVAILABLE"]
     );
 
-    const [newRoom] = await pool.query("SELECT * FROM rooms WHERE id = ?", [result.insertId]);
+    const [newRoom] = await pool.query("SELECT * FROM rooms WHERE room_id = ?", [result.insertId]);
 
     res.status(201).json({
       success: true,
@@ -75,9 +75,9 @@ export const createRoom = async (req, res) => {
 
 export const updateRoom = async (req, res) => {
   try {
-    const { title, description, price, capacity, image, is_available } = req.body;
+    const { room_type, capacity, image, price, status } = req.body;
 
-    const [rooms] = await pool.query("SELECT * FROM rooms WHERE id = ?", [req.params.id]);
+    const [rooms] = await pool.query("SELECT * FROM rooms WHERE room_id = ?", [req.params.id]);
 
     if (rooms.length === 0) {
       return res.status(404).json({
@@ -87,19 +87,18 @@ export const updateRoom = async (req, res) => {
     }
 
     await pool.query(
-      "UPDATE rooms SET title = ?, description = ?, price = ?, capacity = ?, image = ?, is_available = ? WHERE id = ?",
+      "UPDATE rooms SET room_type = ?, capacity = ?, image = ?, price = ?, status = ? WHERE room_id = ?",
       [
-        title || rooms[0].title,
-        description || rooms[0].description,
-        price || rooms[0].price,
+        room_type || rooms[0].room_type,
         capacity || rooms[0].capacity,
         image !== undefined ? image : rooms[0].image,
-        is_available !== undefined ? is_available : rooms[0].is_available,
+        price || rooms[0].price,
+        status || rooms[0].status,
         req.params.id,
       ]
     );
 
-    const [updatedRoom] = await pool.query("SELECT * FROM rooms WHERE id = ?", [req.params.id]);
+    const [updatedRoom] = await pool.query("SELECT * FROM rooms WHERE room_id = ?", [req.params.id]);
 
     res.json({
       success: true,
@@ -117,7 +116,7 @@ export const updateRoom = async (req, res) => {
 
 export const deleteRoom = async (req, res) => {
   try {
-    const [rooms] = await pool.query("SELECT * FROM rooms WHERE id = ?", [req.params.id]);
+    const [rooms] = await pool.query("SELECT * FROM rooms WHERE room_id = ?", [req.params.id]);
 
     if (rooms.length === 0) {
       return res.status(404).json({
@@ -126,7 +125,7 @@ export const deleteRoom = async (req, res) => {
       });
     }
 
-    await pool.query("DELETE FROM rooms WHERE id = ?", [req.params.id]);
+    await pool.query("DELETE FROM rooms WHERE room_id = ?", [req.params.id]);
 
     res.json({
       success: true,

@@ -1,7 +1,7 @@
 /* General Amenities Section */
 .amenitiesSection {
-  background: linear-gradient(135deg, #FFF2E1 0%, #EAD8C0 100%);
-  padding: 100px 20px;
+  background: linear-gradient(180deg, #FFF2E1 0%, #EAD8C0 50%, #D1BB9E 100%);
+  padding: 120px 20px;
   margin-top: 80px;
   position: relative;
   overflow: hidden;
@@ -13,53 +13,97 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #A79277 0%, #D1BB9E 50%, #A79277 100%);
+  height: 5px;
+  background: linear-gradient(90deg, transparent 0%, #A79277 20%, #D1BB9E 50%, #A79277 80%, transparent 100%);
+  box-shadow: 0 2px 8px rgba(167, 146, 119, 0.3);
+}
+
+.amenitiesSection::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(167, 146, 119, 0.05) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .amenitiesContainer {
-  max-width: 1280px;
+  max-width: 1320px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 .amenitiesSection h2 {
   text-align: center;
-  font-size: 48px;
-  margin: 0 0 16px 0;
+  font-size: 52px;
+  margin: 0 0 20px 0;
   color: #A79277;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  text-shadow: 0 2px 4px rgba(167, 146, 119, 0.1);
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-shadow: 0 4px 12px rgba(167, 146, 119, 0.15);
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.amenitiesSection h2::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: linear-gradient(90deg, #A79277 0%, #D1BB9E 100%);
+  border-radius: 2px;
 }
 
 .amenitiesSubtitle {
   text-align: center;
-  font-size: 20px;
-  color: #6b7280;
-  margin: 0 0 64px 0;
-  max-width: 700px;
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.6;
+  font-size: 22px;
+  color: #4b5563;
+  margin: 32px auto 72px;
+  max-width: 750px;
+  line-height: 1.7;
   font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
 .amenitiesGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 36px;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .amenityCard {
-  background: white;
-  padding: 40px 28px;
-  border-radius: 20px;
+  background: linear-gradient(145deg, #ffffff 0%, #fefefe 100%);
+  padding: 48px 32px;
+  border-radius: 24px;
   text-align: center;
-  box-shadow: 0 8px 24px rgba(167, 146, 119, 0.12);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 2px solid transparent;
+  box-shadow: 
+    0 10px 30px rgba(167, 146, 119, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid rgba(209, 187, 158, 0.2);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .amenityCard::before {
@@ -68,70 +112,146 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #A79277 0%, #D1BB9E 100%);
+  height: 5px;
+  background: linear-gradient(90deg, #A79277 0%, #D1BB9E 50%, #A79277 100%);
   transform: scaleX(0);
-  transition: transform 0.4s ease;
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.amenityCard::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(167, 146, 119, 0.03) 0%, transparent 70%);
+  transition: transform 0.5s ease;
+  z-index: 0;
 }
 
 .amenityCard:hover::before {
   transform: scaleX(1);
 }
 
+.amenityCard:hover::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
 .amenityCard:hover {
-  transform: translateY(-12px);
-  box-shadow: 0 16px 40px rgba(167, 146, 119, 0.25);
+  transform: translateY(-16px) scale(1.02);
+  box-shadow: 
+    0 20px 50px rgba(167, 146, 119, 0.2),
+    0 8px 20px rgba(0, 0, 0, 0.08);
   border-color: #D1BB9E;
 }
 
 .amenityIcon {
-  font-size: 56px;
+  font-size: 64px;
   display: block;
-  margin-bottom: 20px;
-  filter: drop-shadow(0 4px 8px rgba(167, 146, 119, 0.2));
-  transition: transform 0.4s ease;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 6px 12px rgba(167, 146, 119, 0.25));
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
 }
 
 .amenityCard:hover .amenityIcon {
-  transform: scale(1.1) rotate(5deg);
+  transform: scale(1.15) rotate(-5deg);
+  filter: drop-shadow(0 8px 16px rgba(167, 146, 119, 0.35));
 }
 
 .amenityCard h4 {
-  margin: 0 0 12px 0;
-  font-size: 20px;
+  margin: 0 0 16px 0;
+  font-size: 22px;
   color: #A79277;
-  font-weight: 800;
-  letter-spacing: 0.3px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s ease;
+}
+
+.amenityCard:hover h4 {
+  color: #8B7355;
 }
 
 .amenityCard p {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
   color: #6b7280;
-  line-height: 1.7;
+  line-height: 1.8;
   font-weight: 500;
+  position: relative;
+  z-index: 1;
+  transition: color 0.3s ease;
+}
+
+.amenityCard:hover p {
+  color: #4b5563;
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .amenitiesGrid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px;
+  }
+}
+
 @media (max-width: 768px) {
   .amenitiesSection {
-    padding: 60px 16px;
+    padding: 80px 16px;
   }
 
   .amenitiesSection h2 {
-    font-size: 32px;
+    font-size: 36px;
+  }
+
+  .amenitiesSection h2::after {
+    width: 80px;
+    height: 3px;
   }
 
   .amenitiesSubtitle {
-    font-size: 16px;
+    font-size: 18px;
+    margin-bottom: 48px;
   }
 
   .amenitiesGrid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 20px;
   }
 
   .amenityCard {
-    padding: 24px 20px;
+    padding: 36px 24px;
+  }
+
+  .amenityIcon {
+    font-size: 52px;
+  }
+
+  .amenityCard h4 {
+    font-size: 20px;
+  }
+
+  .amenityCard p {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .amenitiesSection {
+    padding: 60px 12px;
+  }
+
+  .amenitiesSection h2 {
+    font-size: 28px;
+  }
+
+  .amenityCard {
+    padding: 28px 20px;
   }
 }

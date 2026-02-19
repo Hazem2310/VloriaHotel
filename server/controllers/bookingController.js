@@ -2,7 +2,7 @@ import pool from "../config/db.js";
 
 export const createBooking = async (req, res) => {
   try {
-    const { roomId, checkIn, checkOut } = req.body;
+    const { roomId, checkIn, checkOut, mealPackageId = null } = req.body;
 
     if (!roomId || !checkIn || !checkOut) {
       return res.status(400).json({
@@ -32,12 +32,33 @@ export const createBooking = async (req, res) => {
 
     const room = rooms[0];
     const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
-    const totalPrice = room.price * nights;
+    let totalPrice = room.price * nights;
+    
+    // Calculate meal package cost if selected
+    let mealCost = 0;
+    if (mealPackageId) {
+      const [packages] = await pool.query(
+        "SELECT price_per_day FROM meal_packages WHERE package_id = ?",
+        [mealPackageId]
+      );
+      if (packages.length > 0) {
+        mealCost = packages[0].price_per_day * nights;
+        totalPrice += mealCost;
+      }
+    }
 
     const [result] = await pool.query(
       "INSERT INTO bookings (user_id, room_id, check_in, check_out, total_price, status) VALUES (?, ?, ?, ?, ?, ?)",
       [req.user.id, roomId, checkIn, checkOut, totalPrice, "pending"]
     );
+
+    // Insert booking-meal package relationship
+    if (mealPackageId) {
+      await pool.query(
+        "INSERT INTO booking_meal_packages (booking_id, package_id) VALUES (?, ?)",
+        [result.insertId, mealPackageId]
+      );
+    }
 
     const [newBooking] = await pool.query(
       `SELECT b.*, r.title as room_title, r.image as room_image, u.name as user_name 

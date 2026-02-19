@@ -1,31 +1,78 @@
 .hallsPage {
   min-height: 100vh;
-  background: #f9fafb;
+  background: linear-gradient(to bottom, #FFF2E1 0%, #ffffff 50%, #FFF2E1 100%);
 }
 
 .hero {
-  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
+  background: linear-gradient(rgba(167, 146, 119, 0.85), rgba(139, 115, 85, 0.85)), 
+              url('http://localhost:5000/uploads/halls/halls2.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color: white;
   text-align: center;
-  padding: 80px 20px 60px;
+  padding: 140px 20px 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 0;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(to top, #FFF2E1, transparent);
 }
 
 .hero h1 {
-  font-size: 48px;
-  margin: 0 0 16px 0;
-  font-weight: 800;
+  font-size: 72px;
+  margin: 0 0 24px 0;
+  font-weight: 900;
+  letter-spacing: -3px;
+  position: relative;
+  z-index: 1;
+  color: #FFF2E1;
+  text-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+  animation: fadeInUp 1s ease-out;
 }
 
 .hero p {
-  font-size: 20px;
-  opacity: 0.9;
+  font-size: 24px;
+  opacity: 0.95;
   margin: 0;
+  position: relative;
+  z-index: 1;
+  font-weight: 300;
+  letter-spacing: 1px;
+  max-width: 800px;
+  margin: 0 auto;
+  color: #FFF2E1;
+  line-height: 1.6;
+  animation: fadeInUp 1s ease-out 0.2s both;
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 60px 20px;
+  max-width: 1400px;
+  margin: -60px auto 0;
+  padding: 0 20px 60px;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 48px;
+  position: relative;
+  z-index: 2;
 }
 
 .loading {
@@ -45,18 +92,21 @@
 
 .hallsGrid {
   display: grid;
-  gap: 40px;
+  gap: 48px;
   margin-bottom: 80px;
+  animation: fadeIn 0.8s ease-out;
 }
 
 .hallCard {
   background: white;
-  border-radius: 20px;
+  border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  display: grid;
-  grid-template-columns: 400px 1fr;
-  transition: all 0.3s ease;
+  box-shadow: 
+    0 10px 40px rgba(167, 146, 119, 0.12),
+    0 2px 8px rgba(167, 146, 119, 0.08);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid #EAD8C0;
+  position: relative;
 }
 
 .hallCard:hover {
@@ -118,6 +168,20 @@
   font-size: 20px;
 }
 
+.capacityInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #FFF2E1 0%, #EAD8C0 100%);
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #A79277;
+  border: 1px solid #D1BB9E;
+}
+
 .pricing {
   display: flex;
   align-items: baseline;
@@ -157,7 +221,90 @@
   box-shadow: 0 6px 20px rgba(167, 146, 119, 0.3);
 }
 
-/* Info Section */
+.bookNowBtn {
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #A79277 0%, #8B7355 100%);
+  color: white;
+  border: 2px solid #A79277;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 15px;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.bookNowBtn:hover {
+  background: linear-gradient(135deg, #8B7355 0%, #A79277 100%);
+  color: #FFF2E1;
+  border-color: #8B7355;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(167, 146, 119, 0.5);
+}
+
+.filters {
+  background: white;
+  padding: 32px;
+  border-radius: 24px;
+  box-shadow: 
+    0 20px 60px rgba(167, 146, 119, 0.15),
+    0 4px 12px rgba(167, 146, 119, 0.08);
+  height: fit-content;
+  position: sticky;
+  top: 120px;
+  border: 2px solid #D1BB9E;
+}
+
+.filterHeader h3 {
+  margin: 0;
+  font-size: 24px;
+  color: #A79277;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.filterGroup label {
+  display: block;
+  font-weight: 700;
+  color: #A79277;
+  margin-bottom: 12px;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+}
+
+.filterGroup input:focus,
+.filterGroup select:focus {
+  outline: none;
+  border-color: #A79277;
+  box-shadow: 0 0 0 3px rgba(167, 146, 119, 0.1);
+}
+
+.viewDetailsBtn {
+  padding: 16px 24px;
+  background: white;
+  color: #A79277;
+  border: 2px solid #D1BB9E;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 15px;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  letter-spacing: 0.3px;
+}
+
+.viewDetailsBtn:hover {
+  background: #A79277;
+  color: white;
+  border-color: #A79277;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(167, 146, 119, 0.3);
+}
+
 .infoSection {
   margin-top: 80px;
 }

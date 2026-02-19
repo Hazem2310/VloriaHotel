@@ -1,0 +1,23 @@
+/* Hall Type Badge Styling */
+.hallTypeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #FFF2E1 0%, #EAD8C0 100%);
+  border: 2px solid #D1BB9E;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #A79277;
+  white-space: nowrap;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}

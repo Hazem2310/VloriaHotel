@@ -1,0 +1,366 @@
+/* Elegant Halls Page Enhancements */
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Enhanced Card Styling */
+.card {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 
+    0 20px 60px rgba(167, 146, 119, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(209, 187, 158, 0.3);
+  position: relative;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 242, 225, 0.4),
+    transparent
+  );
+  transition: left 0.8s;
+}
+
+.card:hover::before {
+  left: 100%;
+}
+
+.card:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 
+    0 30px 80px rgba(167, 146, 119, 0.25),
+    0 12px 40px rgba(0, 0, 0, 0.15);
+  border-color: #A79277;
+}
+
+/* Image Container */
+.imageContainer {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #FFF2E1 0%, #EAD8C0 100%);
+}
+
+.imageContainer::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+  pointer-events: none;
+}
+
+.hallImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover .hallImage {
+  transform: scale(1.1);
+}
+
+/* Status Badge */
+.statusBadge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  animation: fadeIn 0.6s ease-out 0.3s both;
+}
+
+.statusAvailable {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  letter-spacing: 0.5px;
+}
+
+/* Content Section */
+.content {
+  padding: 40px;
+  background: linear-gradient(to bottom, white 0%, #FFFBF5 100%);
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 900;
+  color: #A79277;
+  margin: 0 0 16px 0;
+  letter-spacing: -1px;
+  line-height: 1.2;
+}
+
+.description {
+  color: #6b7280;
+  font-size: 16px;
+  line-height: 1.8;
+  margin: 0 0 24px 0;
+  font-weight: 400;
+}
+
+/* Capacity Info */
+.capacityIcon {
+  font-size: 24px;
+}
+
+/* Price Section */
+.priceSection {
+  margin: 24px 0;
+  padding: 24px;
+  background: linear-gradient(135deg, #FFF2E1 0%, #EAD8C0 100%);
+  border-radius: 16px;
+  border: 2px solid #D1BB9E;
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.amount {
+  font-size: 42px;
+  font-weight: 900;
+  color: #A79277;
+  letter-spacing: -2px;
+}
+
+.period {
+  font-size: 16px;
+  color: #8B7355;
+  font-weight: 600;
+}
+
+/* Card Actions */
+.cardActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+/* Why Choose Section */
+.whyChooseSection {
+  background: linear-gradient(135deg, #A79277 0%, #8B7355 100%);
+  padding: 100px 20px;
+  margin-top: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.whyChooseSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="%23FFF2E1" opacity="0.1"/></svg>');
+  background-size: 50px 50px;
+  animation: shimmer 20s linear infinite;
+}
+
+.whyChooseContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.whyChooseContainer h2 {
+  text-align: center;
+  font-size: 48px;
+  color: #FFF2E1;
+  margin: 0 0 16px 0;
+  font-weight: 900;
+  letter-spacing: -2px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 20px;
+  color: #FFF2E1;
+  opacity: 0.9;
+  margin: 0 0 60px 0;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+}
+
+.benefit {
+  text-align: center;
+  padding: 40px 32px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 2px solid rgba(255, 242, 225, 0.2);
+  transition: all 0.4s ease;
+}
+
+.benefit:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-8px);
+  border-color: rgba(255, 242, 225, 0.4);
+}
+
+.benefitIcon {
+  font-size: 56px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.benefit h3 {
+  margin: 0 0 12px 0;
+  font-size: 22px;
+  color: #FFF2E1;
+  font-weight: 800;
+}
+
+.benefit p {
+  margin: 0;
+  color: #FFF2E1;
+  opacity: 0.9;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* CTA Section */
+.ctaSection {
+  background: linear-gradient(to bottom, #FFF2E1 0%, #EAD8C0 100%);
+  padding: 100px 20px;
+  text-align: center;
+}
+
+.ctaContent h2 {
+  font-size: 48px;
+  color: #A79277;
+  margin: 0 0 16px 0;
+  font-weight: 900;
+  letter-spacing: -2px;
+}
+
+.ctaContent p {
+  font-size: 20px;
+  color: #8B7355;
+  margin: 0 0 40px 0;
+  font-weight: 400;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ctaPrimary {
+  padding: 18px 48px;
+  background: linear-gradient(135deg, #A79277 0%, #8B7355 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 18px;
+  transition: all 0.4s ease;
+  box-shadow: 0 8px 24px rgba(167, 146, 119, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.ctaPrimary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(167, 146, 119, 0.5);
+}
+
+.ctaSecondary {
+  padding: 18px 48px;
+  background: white;
+  color: #A79277;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 18px;
+  border: 3px solid #A79277;
+  transition: all 0.4s ease;
+  letter-spacing: 0.5px;
+}
+
+.ctaSecondary:hover {
+  background: #A79277;
+  color: white;
+  transform: translateY(-4px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 48px;
+  }
+  
+  .hero p {
+    font-size: 18px;
+  }
+  
+  .title {
+    font-size: 26px;
+  }
+  
+  .amount {
+    font-size: 32px;
+  }
+  
+  .cardActions {
+    grid-template-columns: 1fr;
+  }
+}

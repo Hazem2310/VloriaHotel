@@ -15,6 +15,12 @@ const Rooms = () => {
     maxPrice: "",
     capacity: "",
     availableOnly: false,
+    amenities: {
+      balcony: false,
+      pool_view: false,
+      sea_view: false,
+      breakfast_included: false,
+    },
   });
   const { t } = useLanguage();
 
@@ -23,7 +29,7 @@ const Rooms = () => {
 
     if (filters.search) {
       filtered = filtered.filter((room) =>
-        room.title.toLowerCase().includes(filters.search.toLowerCase())
+        room.room_type.toLowerCase().includes(filters.search.toLowerCase())
       );
     }
 
@@ -40,7 +46,21 @@ const Rooms = () => {
     }
 
     if (filters.availableOnly) {
-      filtered = filtered.filter((room) => room.is_available);
+      filtered = filtered.filter((room) => room.status === 'AVAILABLE');
+    }
+
+    // Amenity filters
+    if (filters.amenities.balcony) {
+      filtered = filtered.filter((room) => room.balcony);
+    }
+    if (filters.amenities.pool_view) {
+      filtered = filtered.filter((room) => room.pool_view);
+    }
+    if (filters.amenities.sea_view) {
+      filtered = filtered.filter((room) => room.sea_view);
+    }
+    if (filters.amenities.breakfast_included) {
+      filtered = filtered.filter((room) => room.breakfast_included);
     }
 
     setFilteredRooms(filtered);
@@ -79,66 +99,98 @@ const Rooms = () => {
       maxPrice: "",
       capacity: "",
       availableOnly: false,
+      amenities: {
+        balcony: false,
+        pool_view: false,
+        sea_view: false,
+        breakfast_included: false,
+      },
     });
+  };
+
+  const handleAmenityFilter = (amenity) => {
+    setFilters((prev) => ({
+      ...prev,
+      amenities: {
+        ...prev.amenities,
+        [amenity]: !prev.amenities[amenity],
+      },
+    }));
+  };
+
+  const getRoomAmenities = (room) => {
+    const amenities = [];
+    
+    if (room.wifi) amenities.push({ icon: "📶", name: "WiFi" });
+    if (room.tv) amenities.push({ icon: "📺", name: "Smart TV" });
+    if (room.air_conditioning) amenities.push({ icon: "❄️", name: "A/C" });
+    if (room.room_service) amenities.push({ icon: "🍽️", name: "Room Service" });
+    if (room.mini_bar) amenities.push({ icon: "🍷", name: "Minibar" });
+    if (room.coffee_machine) amenities.push({ icon: "☕", name: "Coffee" });
+    if (room.safe_box) amenities.push({ icon: "🔒", name: "Safe Box" });
+    if (room.balcony) amenities.push({ icon: "🌅", name: "Balcony" });
+    if (room.pool_view) amenities.push({ icon: "🏊", name: "Pool View" });
+    if (room.sea_view) amenities.push({ icon: "🌊", name: "Sea View" });
+    if (room.parking) amenities.push({ icon: "🅿️", name: "Parking" });
+    if (room.breakfast_included) amenities.push({ icon: "🍳", name: "Breakfast" });
+    
+    return amenities;
+  };
+
+  const isSuite = (roomType) => {
+    return roomType.toLowerCase().includes('suite');
+  };
+
+  const getSuiteBadge = (roomType) => {
+    if (roomType.includes('Executive')) return { icon: "👑", text: "Premium Suite" };
+    if (roomType.includes('Junior')) return { icon: "⭐", text: "Suite" };
+    return null;
   };
 
   if (loading) {
     return <div className={styles.loading}>{t("loading")}</div>;
   }
 
-  const getRoomAmenities = (roomTitle) => {
-    const commonAmenities = ["WiFi", "Smart TV", "A/C", "Minibar", "Coffee Station", "Safe Box"];
-    
-    if (roomTitle.toLowerCase().includes("suite")) {
-      return [...commonAmenities, "Bathtub", "VIP Service", "Premium Toiletries"];
-    } else if (roomTitle.toLowerCase().includes("triple")) {
-      return [...commonAmenities, "Extra Space", "Family Friendly"];
-    } else if (roomTitle.toLowerCase().includes("balcony")) {
-      return [...commonAmenities, "Private Balcony", "Outdoor Seating"];
-    }
-    return commonAmenities;
-  };
-
   return (
     <div className={styles.roomsPage}>
       <div className={styles.hero}>
-        <h1>Luxury Rooms & Suites</h1>
-        <p>Experience unparalleled comfort and elegance at Veloria Grand Hotel</p>
+        <h1>{t("luxuryRoomsTitle")}</h1>
+        <p>{t("luxurySubtitle")}</p>
       </div>
 
       <div className={styles.container}>
         {/* Filters Section */}
         <aside className={styles.filters}>
           <div className={styles.filterHeader}>
-            <h3>Filters</h3>
+            <h3>{t("filters")}</h3>
             <button onClick={clearFilters} className={styles.clearBtn}>
-              Clear All
+              {t("clearAll")}
             </button>
           </div>
 
           <div className={styles.filterGroup}>
-            <label>Search by Name</label>
+            <label>{t("searchByName")}</label>
             <input
               type="text"
-              placeholder="Search rooms..."
+              placeholder={t("searchRooms")}
               value={filters.search}
               onChange={(e) => handleFilterChange("search", e.target.value)}
             />
           </div>
 
           <div className={styles.filterGroup}>
-            <label>Price Range (per night)</label>
+            <label>{t("priceRange")}</label>
             <div className={styles.priceInputs}>
               <input
                 type="number"
-                placeholder="Min $"
+                placeholder={t("minPrice")}
                 value={filters.minPrice}
                 onChange={(e) => handleFilterChange("minPrice", e.target.value)}
               />
               <span>-</span>
               <input
                 type="number"
-                placeholder="Max $"
+                placeholder={t("maxPrice")}
                 value={filters.maxPrice}
                 onChange={(e) => handleFilterChange("maxPrice", e.target.value)}
               />
@@ -146,16 +198,16 @@ const Rooms = () => {
           </div>
 
           <div className={styles.filterGroup}>
-            <label>Minimum Capacity</label>
+            <label>{t("minimumCapacity")}</label>
             <select
               value={filters.capacity}
               onChange={(e) => handleFilterChange("capacity", e.target.value)}
             >
-              <option value="">Any</option>
-              <option value="1">1+ Guest</option>
-              <option value="2">2+ Guests</option>
-              <option value="3">3+ Guests</option>
-              <option value="4">4+ Guests</option>
+              <option value="">{t("anyCapacity")}</option>
+              <option value="1">{t("oneGuest")}</option>
+              <option value="2">{t("twoGuests")}</option>
+              <option value="3">{t("threeGuests")}</option>
+              <option value="4">{t("fourGuests")}</option>
             </select>
           </div>
 
@@ -166,20 +218,57 @@ const Rooms = () => {
                 checked={filters.availableOnly}
                 onChange={(e) => handleFilterChange("availableOnly", e.target.checked)}
               />
-              <span>Available Only</span>
+              <span>{t("availableOnly")}</span>
             </label>
+          </div>
+
+          {/* Amenity Filters */}
+          <div className={styles.filterGroup}>
+            <label>{t("specialFeatures")}</label>
+            <div className={styles.amenityFilters}>
+              <label className={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.amenities.balcony}
+                  onChange={() => handleAmenityFilter("balcony")}
+                />
+                <span>🌅 Balcony</span>
+              </label>
+              <label className={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.amenities.pool_view}
+                  onChange={() => handleAmenityFilter("pool_view")}
+                />
+                <span>🏊 Pool View</span>
+              </label>
+              <label className={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.amenities.sea_view}
+                  onChange={() => handleAmenityFilter("sea_view")}
+                />
+                <span>🌊 Sea View</span>
+              </label>
+              <label className={styles.checkbox}>
+                <input
+                  type="checkbox"
+                  checked={filters.amenities.breakfast_included}
+                  onChange={() => handleAmenityFilter("breakfast_included")}
+                />
+                <span>🍳 Breakfast</span>
+              </label>
+            </div>
           </div>
 
           {/* Room Features Info */}
           <div className={styles.filterInfo}>
-            <h4>All Rooms Include:</h4>
+            <h4>{t("includedInStay")}</h4>
             <ul>
-              <li>✓ Free High-Speed WiFi</li>
-              <li>✓ Smart TV</li>
-              <li>✓ Air Conditioning</li>
-              <li>✓ 24/7 Room Service</li>
-              <li>✓ Daily Housekeeping</li>
-              <li>✓ Luxury Toiletries</li>
+              <li>✔ {t("freeWifi")}</li>
+              <li>✔ {t("smartTV")}</li>
+              <li>✔ {t("airConditioning")}</li>
+              <li>✔ {t("roomService")}</li>
             </ul>
           </div>
         </aside>
@@ -188,158 +277,117 @@ const Rooms = () => {
         <main className={styles.roomsContent}>
           <div className={styles.resultsHeader}>
             <p>
-              <strong>{filteredRooms.length}</strong> {filteredRooms.length === 1 ? "room" : "rooms"} available
+              <strong>{filteredRooms.length}</strong> {filteredRooms.length === 1 ? t("roomAvailable") : t("roomsAvailable")}
             </p>
           </div>
 
           {filteredRooms.length === 0 ? (
             <div className={styles.noResults}>
-              <p>No rooms match your criteria</p>
+              <p>{t("noRoomsMatch")}</p>
               <button onClick={clearFilters} className={styles.resetBtn}>
-                Reset Filters
+                {t("resetFilters")}
               </button>
             </div>
           ) : (
             <div className={styles.roomsGrid}>
-              {filteredRooms.map((room) => (
-                <div key={room.id} className={styles.roomCard}>
-                  <div className={styles.roomImage}>
-                    {room.image ? (
-                      <img src={room.image} alt={room.title} />
-                    ) : (
-                      <div className={styles.noImage}>
-                        <span className={styles.noImageIcon}>🏨</span>
-                        <span>Luxury Room</span>
-                      </div>
-                    )}
-                    <div className={styles.roomBadge}>
-                      {room.is_available ? (
-                        <span className={styles.available}>Available</span>
+              {filteredRooms.map((room) => {
+                const suiteBadge = getSuiteBadge(room.room_type);
+                const amenities = getRoomAmenities(room);
+                
+                return (
+                  <div key={room.room_id} className={styles.card}>
+                    <div className={styles.imageContainer}>
+                      {room.image ? (
+                        <img src={room.image} alt={room.room_type} className={styles.roomImage} />
                       ) : (
-                        <span className={styles.unavailable}>Booked</span>
+                        <div className={styles.noImage}>
+                          <span className={styles.noImageIcon}>🏨</span>
+                          <span className={styles.roomNumber}>Room {room.room_number}</span>
+                        </div>
                       )}
+                      
+                      {/* Status Badge */}
+                      <div className={styles.statusBadge}>
+                        {room.status === 'AVAILABLE' ? (
+                          <span className={styles.statusAvailable}>✓ Available</span>
+                        ) : room.status === 'BOOKED' ? (
+                          <span className={styles.statusBooked}>Booked</span>
+                        ) : (
+                          <span className={styles.statusMaintenance}>Maintenance</span>
+                        )}
+                      </div>
+
+                      {/* Suite Badge */}
+                      {suiteBadge && (
+                        <div className={styles.suiteBadge}>
+                          <span>{suiteBadge.icon} {suiteBadge.text}</span>
+                        </div>
+                      )}
+
+                      {/* Room Number Overlay */}
+                      <div className={styles.roomNumberOverlay}>
+                        Room {room.room_number}
+                      </div>
+                    </div>
+
+                    <div className={styles.content}>
+                      <div className={styles.header}>
+                        <h3 className={styles.title}>{room.room_type}</h3>
+                      </div>
+
+                      {/* Capacity */}
+                      <div className={styles.capacityInfo}>
+                        <span className={styles.capacityIcon}>👥</span>
+                        <span>{t("upToGuests")} {room.capacity} {room.capacity === 1 ? t("guest") : t("guests")}</span>
+                      </div>
+
+                      {/* Amenities with Icons */}
+                      <div className={styles.amenitiesList}>
+                        {amenities.slice(0, 3).map((amenity, index) => (
+                          <div key={index} className={styles.amenityItem}>
+                            <span className={styles.amenityIcon}>{amenity.icon}</span>
+                            <span className={styles.amenityName}>{amenity.name}</span>
+                          </div>
+                        ))}
+                        {amenities.length > 3 && (
+                          <div className={styles.amenityMore}>
+                            +{amenities.length - 3} more
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Price */}
+                      <div className={styles.priceSection}>
+                        <div className={styles.price}>
+                          <span className={styles.amount}>${room.price}</span>
+                          <span className={styles.period}>{t("perNight")}</span>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className={styles.cardActions}>
+                        <Link 
+                          to={`/rooms/${room.room_id}`} 
+                          className={styles.viewDetailsBtn}
+                          state={{ scrollToBooking: false }}
+                        >
+                          {t("viewDetails")}
+                        </Link>
+                        <Link 
+                          to={`/rooms/${room.room_id}`} 
+                          className={styles.bookNowBtn}
+                          state={{ scrollToBooking: true }}
+                        >
+                          {t("bookNow")}
+                        </Link>
+                      </div>
                     </div>
                   </div>
-
-                  <div className={styles.roomInfo}>
-                    <div className={styles.roomHeader}>
-                      <h3>{room.title}</h3>
-                      <div className={styles.roomType}>
-                        <span className={styles.typeIcon}>🛏️</span>
-                        <span>{room.capacity === 1 ? "Single" : room.capacity === 2 ? "Double" : room.capacity === 3 ? "Triple" : "Suite"}</span>
-                      </div>
-                    </div>
-                    
-                    <p className={styles.description}>{room.description}</p>
-
-                    {/* Amenities */}
-                    <div className={styles.amenities}>
-                      {getRoomAmenities(room.title).slice(0, 4).map((amenity, index) => (
-                        <span key={index} className={styles.amenityTag}>
-                          {amenity}
-                        </span>
-                      ))}
-                      {getRoomAmenities(room.title).length > 4 && (
-                        <span className={styles.amenityTag}>+{getRoomAmenities(room.title).length - 4} more</span>
-                      )}
-                    </div>
-
-                    <div className={styles.roomMeta}>
-                      <div className={styles.metaItem}>
-                        <span className={styles.icon}>👥</span>
-                        <span>Up to {room.capacity} {room.capacity === 1 ? "Guest" : "Guests"}</span>
-                      </div>
-                      <div className={styles.price}>
-                        <span className={styles.amount}>${room.price}</span>
-                        <span className={styles.period}>/ night</span>
-                      </div>
-                    </div>
-
-                    <div className={styles.cardActions}>
-                      <Link to={`/rooms/${room.id}`} className={styles.viewDetailsBtn}>
-                        View Details
-                      </Link>
-                      <Link to={`/rooms/${room.id}`} className={styles.bookNowBtn}>
-                        Book Now
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </main>
-      </div>
-
-      {/* General Amenities Section */}
-      <div className={styles.amenitiesSection}>
-        <div className={styles.amenitiesContainer}>
-          <h2>Luxury Hotel Room Features</h2>
-          <p className={styles.amenitiesSubtitle}>Every room at Veloria Grand Hotel includes premium amenities for your comfort</p>
-          
-          <div className={styles.amenitiesGrid}>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>📶</span>
-              <h4>Free High-Speed WiFi</h4>
-              <p>Stay connected with complimentary high-speed internet</p>
-            </div>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>📺</span>
-              <h4>Smart TV</h4>
-              <p>Entertainment with premium channels and streaming</p>
-            </div>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>❄️</span>
-              <h4>Air Conditioning</h4>
-              <p>Climate control for perfect room temperature</p>
-            </div>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>🍷</span>
-              <h4>Minibar</h4>
-              <p>Refreshments and snacks at your convenience</p>
-            </div>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>☕</span>
-              <h4>Coffee & Tea Station</h4>
-              <p>Premium coffee and tea selection</p>
-            </div>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>🔒</span>
-              <h4>Safety Deposit Box</h4>
-              <p>Secure storage for your valuables</p>
-            </div>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>🧴</span>
-              <h4>Luxury Toiletries</h4>
-              <p>Premium bath and body products</p>
-            </div>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>🍽️</span>
-              <h4>24/7 Room Service</h4>
-              <p>Dining delivered to your room anytime</p>
-            </div>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>🧹</span>
-              <h4>Daily Housekeeping</h4>
-              <p>Professional cleaning service every day</p>
-            </div>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>📞</span>
-              <h4>Telephone</h4>
-              <p>Direct line for guest services</p>
-            </div>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>💨</span>
-              <h4>Hair Dryer</h4>
-              <p>Professional hair dryer in every room</p>
-            </div>
-            <div className={styles.amenityCard}>
-              <span className={styles.amenityIcon}>👔</span>
-              <h4>Iron (Upon Request)</h4>
-              <p>Ironing facilities available on request</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

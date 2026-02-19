@@ -48,8 +48,8 @@ const Restaurant = () => {
           <div className={styles.infoCard}>
             <div className={styles.cardImage}>
               <img
-                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800"
-                alt="Restaurant Interior"
+                src="http://localhost:5000/uploads/resturante/res1.jpeg"
+                alt="Veloria Grand Hotel Restaurant"
               />
             </div>
             <div className={styles.cardContent}>
