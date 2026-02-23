@@ -3,10 +3,17 @@ import pool from "../config/db.js";
 export const getAllRooms = async (req, res) => {
   try {
     const [rooms] = await pool.query("SELECT * FROM rooms ORDER BY room_number");
+    
+    // Parse images JSON field for each room
+    const roomsWithImages = rooms.map(room => ({
+      ...room,
+      images: room.images ? JSON.parse(room.images) : []
+    }));
+    
     res.json({
       success: true,
-      count: rooms.length,
-      rooms,
+      count: roomsWithImages.length,
+      rooms: roomsWithImages,
     });
   } catch (error) {
     console.error("Get rooms error:", error);
@@ -27,10 +34,16 @@ export const getRoomById = async (req, res) => {
         message: "Room not found",
       });
     }
+    
+    // Parse images JSON field
+    const room = {
+      ...rooms[0],
+      images: rooms[0].images ? JSON.parse(rooms[0].images) : []
+    };
 
     res.json({
       success: true,
-      room: rooms[0],
+      room: room,
     });
   } catch (error) {
     console.error("Get room error:", error);

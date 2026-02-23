@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { hallsAPI } from "../../Api/hallsApi";
 import { useLanguage } from "../../context/LanguageContext";
 import styles from "./halls.module.css";
-import "./luxury-halls.css";
 
 const Halls = () => {
   const [halls, setHalls] = useState([]);

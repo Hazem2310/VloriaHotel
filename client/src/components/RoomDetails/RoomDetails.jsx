@@ -29,9 +29,12 @@ const RoomDetails = () => {
 
   const fetchRoomDetails = useCallback(async () => {
     try {
-      const response = await roomsAPI.getById(id);
-      if (response.data.success) {
-        setRoom(response.data.room);
+      const data = await roomsAPI.getById(id);
+      console.log("Room details data:", data);
+      if (data.success && data.room) {
+        setRoom(data.room);
+      } else {
+        setError("Room not found");
       }
     } catch (error) {
       console.error("Error fetching room details:", error);
@@ -156,21 +159,17 @@ const RoomDetails = () => {
   };
 
   const getImageGallery = () => {
-    if (!room || !room.image) {
-      return [
-        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800",
-        "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800",
-        "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800",
-        "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800",
-      ];
+    // Check if room has images array from database
+    if (room && room.images && room.images.length > 0) {
+      // Return images from database with full URL
+      return room.images.map(img => `http://localhost:5000${img}`);
     }
     
-    // Use the room's main image plus related images
+    // Fallback to default image if no images in database
     return [
-      room.image,
-      "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800",
-      "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800",
-      "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800",
+      "http://localhost:5000/uploads/rooms/default-room.jpg",
+      "http://localhost:5000/uploads/rooms/default-room.jpg",
+      "http://localhost:5000/uploads/rooms/default-room.jpg",
     ];
   };
 

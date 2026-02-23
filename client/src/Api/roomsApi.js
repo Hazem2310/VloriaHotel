@@ -1,10 +1,10 @@
-import api from "./api";
+import { get, post, put, del } from "./apiClient";
 
 // Rooms API
 export const roomsAPI = {
-  getAll: () => api.get("/rooms"),
-  getById: (id) => api.get(`/rooms/${id}`),
-  create: (data) => api.post("/rooms", data),
-  update: (id, data) => api.put(`/rooms/${id}`, data),
-  delete: (id) => api.delete(`/rooms/${id}`),
+  getAll: () => get("/rooms"),
+  getById: (id) => get(`/rooms/${id}`),
+  create: (data) => post("/rooms", data),
+  update: (id, data) => put(`/rooms/${id}`, data),
+  delete: (id) => del(`/rooms/${id}`),
 };

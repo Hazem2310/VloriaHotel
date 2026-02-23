@@ -1,0 +1,54 @@
+/* Hall Details Page Styles */
+
+.hallDetailsPage {
+  min-height: 100vh;
+  background: #FAFAF9;
+  padding: 120px 20px 60px;
+}
+
+.backSection {
+  max-width: 1400px;
+  margin: 0 auto 20px;
+}
+
+.backBtn {
+  padding: 12px 24px;
+  background: white;
+  color: #A79277;
+  border: 2px solid #A79277;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.backBtn:hover {
+  background: #A79277;
+  color: white;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.loading {
+  text-align: center;
+  padding: 100px 20px;
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.error {
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.error h2 {
+  color: #ef4444;
+  margin-bottom: 20px;
+}

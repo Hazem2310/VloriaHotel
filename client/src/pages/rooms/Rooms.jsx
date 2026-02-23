@@ -76,13 +76,23 @@ const Rooms = () => {
 
   const fetchRooms = async () => {
     try {
-      const response = await roomsAPI.getAll();
-      if (response.data.success) {
-        setRooms(response.data.rooms);
-        setFilteredRooms(response.data.rooms);
+      const data = await roomsAPI.getAll();
+      console.log("=== ROOMS API RESPONSE ===");
+      console.log("Full data object:", JSON.stringify(data, null, 2));
+      console.log("data.success:", data.success);
+      console.log("data.rooms:", data.rooms);
+      console.log("data.rooms length:", data.rooms?.length);
+      
+      if (data.success && data.rooms && data.rooms.length > 0) {
+        console.log("✅ Setting rooms state with", data.rooms.length, "rooms");
+        console.log("First room sample:", data.rooms[0]);
+        setRooms(data.rooms);
+        setFilteredRooms(data.rooms);
+      } else {
+        console.log("❌ No rooms to display. Success:", data.success, "Rooms:", data.rooms);
       }
     } catch (error) {
-      console.error("Error fetching rooms:", error);
+      console.error("❌ Error fetching rooms:", error);
     } finally {
       setLoading(false);
     }
@@ -294,17 +304,22 @@ const Rooms = () => {
                 const suiteBadge = getSuiteBadge(room.room_type);
                 const amenities = getRoomAmenities(room);
                 
+                // Get first image from images array or use default
+                const roomImage = room.images && room.images.length > 0 
+                  ? `http://localhost:5000${room.images[0]}`
+                  : 'http://localhost:5000/uploads/rooms/default-room.jpg';
+
                 return (
                   <div key={room.room_id} className={styles.card}>
                     <div className={styles.imageContainer}>
-                      {room.image ? (
-                        <img src={room.image} alt={room.room_type} className={styles.roomImage} />
-                      ) : (
-                        <div className={styles.noImage}>
-                          <span className={styles.noImageIcon}>🏨</span>
-                          <span className={styles.roomNumber}>Room {room.room_number}</span>
-                        </div>
-                      )}
+                      <img 
+                        src={roomImage} 
+                        alt={room.room_type} 
+                        className={styles.roomImage}
+                        onError={(e) => {
+                          e.target.src = 'http://localhost:5000/uploads/rooms/default-room.jpg';
+                        }}
+                      />
                       
                       {/* Status Badge */}
                       <div className={styles.statusBadge}>
