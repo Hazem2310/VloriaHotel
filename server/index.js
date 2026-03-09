@@ -11,11 +11,13 @@ import roomRoutes from "./routes/rooms.js";
 import serviceRoutes from "./routes/services.js";
 import bookingRoutes from "./routes/bookings.js";
 import reportRoutes from "./routes/reports.js";
-import hallRoutes from "./routes/hallRoutes.js";
 import mealRoutes from "./routes/mealRoutes.js";
 import mealPackageRoutes from "./routes/mealPackageRoutes.js";
 import aiRoutes from "./routes/ai.js";
 import uploadRouter from "./routes/upload.js";
+import employeeRoutes from "./routes/employees.js";
+import invoiceRoutes from "./routes/invoices.js";
+import testRoutes from "./routes/tests.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -49,12 +51,14 @@ app.use("/api/auth", authRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", bookingRoutes);
-app.use("/api/halls", hallRoutes);
 app.use("/api/meals", mealRoutes);
 app.use("/api/meal-packages", mealPackageRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/upload", uploadRouter);
+app.use("/api/employees", employeeRoutes);
+app.use("/api/invoices", invoiceRoutes);
+app.use("/api/tests", testRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ ok: true, message: "Veloria Hotel API is running" });

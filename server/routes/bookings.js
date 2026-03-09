@@ -1,19 +1,39 @@
 import express from "express";
 import {
-  createBooking,
+  createRoomBooking,
+  createRestaurantBooking,
+  createHallBooking,
   getMyBookings,
   getAllBookings,
   updateBookingStatus,
-  deleteBooking,
+  cancelBooking,
+  checkRoomAvailability,
 } from "../controllers/bookingController.js";
-import { protect, admin } from "../middleware/auth.js";
+import { protect, admin, manager, employee } from "../middleware/auth.js";
+import { 
+  validateRoomBooking, 
+  validateRestaurantBooking, 
+  validateHallBooking,
+  validateId,
+  validateStatus
+} from "../middleware/validation.js";
 
 const router = express.Router();
 
-router.post("/", protect, createBooking);
+// Room bookings
+router.post("/room", protect, validateRoomBooking, createRoomBooking);
+router.post("/restaurant", protect, validateRestaurantBooking, createRestaurantBooking);
+router.post("/hall", protect, validateHallBooking, createHallBooking);
+
+// Get bookings
 router.get("/my", protect, getMyBookings);
-router.get("/", protect, admin, getAllBookings);
-router.put("/:id/status", protect, admin, updateBookingStatus);
-router.delete("/:id", protect, deleteBooking);
+router.get("/", protect, employee, getAllBookings);
+
+// Booking management
+router.put("/:id/status", protect, manager, validateId('id'), validateStatus(['PENDING', 'CONFIRMED', 'CANCELLED', 'NO_SHOW', 'CHECKED_IN', 'CHECKED_OUT']), updateBookingStatus);
+router.delete("/:id", protect, validateId('id'), cancelBooking);
+
+// Availability check
+router.get("/check-availability", checkRoomAvailability);
 
 export default router;

@@ -7,7 +7,7 @@ class DatabaseSingleton {
       host: "localhost",
       user: "root",
       password: "",
-      database: "veloria_grand_hotel",
+      database: "veloria_grand_hotel_v2",
       waitForConnections: true,
       connectionLimit: 10,
     });

@@ -48,32 +48,43 @@ export const AuthProvider = ({ children }) => {
         password,
         phone_number,
       });
-      if (response.data.success) {
-        setUser(response.data.user);
-        return { success: true };
+
+      if (response.data?.success) {
+        // لا تعملي setUser هون إذا بدك بعد التسجيل تروحي Login
+        return { success: true, message: response.data.message };
       }
     } catch (error) {
+      console.log("REGISTER ERROR:", error);
+      console.log("REGISTER RESPONSE:", error.response);
       return {
         success: false,
-        message: error.response?.data?.message || "Registration failed",
+        message:
+          error.response?.data?.message ||
+          error.message || // 👈 هاي بتجيب CORS / Network Error
+          "Registration failed",
       };
     }
   };
 
-  const login = async (email, password) => {
-    try {
-      const response = await api.post("/auth/login", { email, password });
-      if (response.data.success) {
-        setUser(response.data.user);
-        return { success: true };
-      }
-    } catch (error) {
-      return {
-        success: false,
-        message: error.response?.data?.message || "Login failed",
-      };
+ const login = async (email, password) => {
+  try {
+    const response = await api.post("/auth/login", { email, password });
+
+    if (response.data?.success) {
+      setUser(response.data.user);
+
+      // ✅ رجّعي اليوزر مع النتيجة عشان نقرر وين نودّيها
+      return { success: true, user: response.data.user };
     }
-  };
+
+    return { success: false, message: response.data?.message || "Login failed" };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || "Login failed",
+    };
+  }
+};
 
   const logout = async () => {
     try {
@@ -91,8 +102,8 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     isAuthenticated: !!user,
-    isAdmin: user?.role === "admin",
-  };
+isAdmin: user?.role === "admin" || user?.role === "owner" ||
+         user?.roles?.includes("admin") || user?.roles?.includes("owner")  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
