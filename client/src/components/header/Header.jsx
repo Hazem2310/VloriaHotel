@@ -148,7 +148,7 @@ export default function Header() {
                 Dashboard
               </Link>
 
-              <Link className={style.link} to="/admin/manage-rooms">
+              <Link className={style.link} to="/admin/rooms">
                 Manage Rooms
               </Link>
 

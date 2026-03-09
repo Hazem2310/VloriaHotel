@@ -2,10 +2,15 @@ import pool from "../config/db.js";
 
 export const getAllRooms = async (req, res) => {
   try {
-    const { room_type_id, status = 'ACTIVE', start_date, end_date } = req.query;
+    const { room_type_id, status, start_date, end_date } = req.query;
     
-    let whereClause = "WHERE r.status = ?";
-    const params = [status];
+    let whereClause = "WHERE 1=1";
+    const params = [];
+    
+    if (status && status !== "ALL") {
+      whereClause += " AND r.status = ?";
+      params.push(status);
+    }
     
     if (room_type_id) {
       whereClause += " AND r.room_type_id = ?";
@@ -67,11 +72,17 @@ export const getAllRooms = async (req, res) => {
       ORDER BY r.room_number
     `, params);
 
-    res.json({
-      success: true,
-      count: rooms.length,
-      rooms: rooms,
-    });
+const parsedRooms = rooms.map((room) => ({
+  ...room,
+  images: room.images ? JSON.parse(room.images) : [],
+  features: room.features ? JSON.parse(room.features) : [],
+}));
+
+res.json({
+  success: true,
+  count: parsedRooms.length,
+  rooms: parsedRooms,
+});
   } catch (error) {
     console.error("Get rooms error:", error);
     res.status(500).json({
@@ -351,7 +362,15 @@ export const createRoom = async (req, res) => {
 
 export const updateRoom = async (req, res) => {
   try {
-    const { room_type_id, floor, extra_bed_allowed, extra_bed_price, notes, status } = req.body;
+    const {
+      room_number,
+      room_type_id,
+      floor,
+      extra_bed_allowed,
+      extra_bed_price,
+      notes,
+      status,
+    } = req.body;
 
     const [rooms] = await pool.query("SELECT * FROM rooms WHERE room_id = ?", [req.params.id]);
 
@@ -362,11 +381,26 @@ export const updateRoom = async (req, res) => {
       });
     }
 
+    if (room_number && room_number !== rooms[0].room_number) {
+      const [existing] = await pool.query(
+        "SELECT room_id FROM rooms WHERE room_number = ? AND room_id != ?",
+        [room_number, req.params.id]
+      );
+
+      if (existing.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Room number already exists",
+        });
+      }
+    }
+
     await pool.query(`
       UPDATE rooms 
-      SET room_type_id = ?, floor = ?, extra_bed_allowed = ?, extra_bed_price = ?, notes = ?, status = ?
+      SET room_number = ?, room_type_id = ?, floor = ?, extra_bed_allowed = ?, extra_bed_price = ?, notes = ?, status = ?
       WHERE room_id = ?
     `, [
+      room_number || rooms[0].room_number,
       room_type_id || rooms[0].room_type_id,
       floor !== undefined ? floor : rooms[0].floor,
       extra_bed_allowed !== undefined ? (extra_bed_allowed ? 1 : 0) : rooms[0].extra_bed_allowed,
@@ -382,7 +416,8 @@ export const updateRoom = async (req, res) => {
         rt.name as room_type_name,
         rt.base_capacity,
         rt.max_capacity,
-        rt.base_price
+        rt.base_price,
+        rt.description as room_type_description
       FROM rooms r
       JOIN room_types rt ON r.room_type_id = rt.room_type_id
       WHERE r.room_id = ?
