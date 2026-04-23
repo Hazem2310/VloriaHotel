@@ -1,0 +1,472 @@
+.galleryContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #FFF2E1 0%, #ffffff 100%);
+}
+
+/* Gallery Header */
+.galleryHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.galleryTitle {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #A79277;
+  margin-bottom: 1rem;
+  letter-spacing: -0.5px;
+}
+
+.gallerySubtitle {
+  font-size: 1.2rem;
+  color: #D1BB9E;
+  margin: 0;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Filter Buttons */
+.filterContainer {
+  margin-bottom: 3rem;
+}
+
+.filterButtons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(167, 146, 119, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.filterBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  background: white;
+  border: 2px solid #EAD8C0;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #A79277;
+  position: relative;
+  overflow: hidden;
+}
+
+.filterBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(209, 187, 158, 0.2), transparent);
+  transition: left 0.6s;
+}
+
+.filterBtn:hover::before {
+  left: 100%;
+}
+
+.filterBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(167, 146, 119, 0.2);
+  border-color: #D1BB9E;
+}
+
+.filterBtn.active {
+  background: linear-gradient(135deg, #A79277 0%, #D1BB9E 100%);
+  border-color: #A79277;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(167, 146, 119, 0.3);
+}
+
+.filterIcon {
+  font-size: 1.1rem;
+}
+
+.filterLabel {
+  font-weight: 600;
+}
+
+/* Gallery Grid */
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.galleryItem {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(167, 146, 119, 0.15);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  background: white;
+}
+
+.galleryItem:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(167, 146, 119, 0.25);
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+}
+
+.galleryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: brightness(0.95);
+}
+
+.galleryItem:hover .galleryImage {
+  transform: scale(1.08);
+  filter: brightness(1.05);
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, 
+    rgba(167, 146, 119, 0.1) 0%, 
+    rgba(167, 146, 119, 0.4) 50%, 
+    rgba(167, 146, 119, 0.8) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 2rem;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(2px);
+}
+
+.galleryItem:hover .imageOverlay {
+  opacity: 1;
+}
+
+.overlayContent {
+  transform: translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.galleryItem:hover .overlayContent {
+  transform: translateY(0);
+}
+
+.imageTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.imageCategory {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.lightboxContent {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: slideUp 0.4s ease-out;
+}
+
+.closeBtn {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1.8rem;
+  padding: 1rem;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.navBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.navBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.prevBtn {
+  left: -100px;
+}
+
+.nextBtn {
+  right: -100px;
+}
+
+.lightboxImage {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: zoomIn 0.4s ease-out;
+}
+
+.lightboxInfo {
+  position: absolute;
+  bottom: -50px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 1rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  animation: slideUp 0.4s ease-out 0.1s backwards;
+}
+
+.lightboxInfo h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.lightboxInfo p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .galleryGrid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .imageContainer {
+    height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .galleryContainer {
+    padding: 2rem 1rem;
+  }
+  
+  .galleryTitle {
+    font-size: 2.2rem;
+  }
+  
+  .gallerySubtitle {
+    font-size: 1rem;
+  }
+  
+  .filterButtons {
+    gap: 0.5rem;
+    padding: 0.8rem;
+  }
+  
+  .filterBtn {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .galleryGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  
+  .imageContainer {
+    height: 220px;
+  }
+  
+  .imageOverlay {
+    padding: 1.5rem;
+  }
+  
+  .imageTitle {
+    font-size: 1.1rem;
+  }
+  
+  .lightbox {
+    padding: 1rem;
+  }
+  
+  .navBtn {
+    width: 50px;
+    height: 50px;
+    font-size: 1.4rem;
+  }
+  
+  .prevBtn {
+    left: -70px;
+  }
+  
+  .nextBtn {
+    right: -70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .galleryContainer {
+    padding: 1.5rem 0.8rem;
+  }
+  
+  .galleryTitle {
+    font-size: 1.8rem;
+  }
+  
+  .galleryGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .imageContainer {
+    height: 200px;
+  }
+  
+  .filterButtons {
+    justify-content: center;
+  }
+  
+  .navBtn {
+    position: fixed;
+    top: auto;
+    bottom: 20px;
+    transform: none;
+  }
+  
+  .prevBtn {
+    left: 20px;
+  }
+  
+  .nextBtn {
+    right: 20px;
+  }
+  
+  .lightboxInfo {
+    bottom: 80px;
+  }
+}

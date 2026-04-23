@@ -2,87 +2,32 @@ import pool from "../config/db.js";
 
 export const getAllRooms = async (req, res) => {
   try {
-    const { room_type_id, status, start_date, end_date } = req.query;
+    const { status } = req.query;
     
     let whereClause = "WHERE 1=1";
     const params = [];
     
     if (status && status !== "ALL") {
-      whereClause += " AND r.status = ?";
+      whereClause += " AND status = ?";
       params.push(status);
-    }
-    
-    if (room_type_id) {
-      whereClause += " AND r.room_type_id = ?";
-      params.push(room_type_id);
-    }
-    
-    // If checking availability for specific dates
-    let availabilityJoin = "";
-    if (start_date && end_date) {
-      availabilityJoin = `
-        AND r.room_id NOT IN (
-          SELECT DISTINCT br.room_id
-          FROM booking_rooms br
-          JOIN bookings b ON br.booking_id = b.booking_id
-          WHERE br.start_date < ? AND br.end_date > ?
-            AND b.status NOT IN ('CANCELLED', 'NO_SHOW')
-        )
-      `;
-      params.push(end_date, start_date);
     }
 
     const [rooms] = await pool.query(`
-      SELECT 
-        r.*,
-        rt.name as room_type_name,
-        rt.base_capacity,
-        rt.max_capacity,
-        rt.base_price,
-        rt.description as room_type_description,
-        (
-          SELECT JSON_ARRAYAGG(
-            JSON_OBJECT(
-              'image_id', ri.image_id,
-              'image_url', ri.image_url,
-              'sort_order', ri.sort_order
-            )
-          )
-          FROM room_images ri
-          WHERE ri.room_id = r.room_id
-          ORDER BY ri.sort_order
-        ) as images,
-        (
-          SELECT JSON_ARRAYAGG(
-            JSON_OBJECT(
-              'feature_name', f.name,
-              'value_bool', rf.value_bool,
-              'value_text', rf.value_text,
-              'value_number', rf.value_number
-            )
-          )
-          FROM room_features rf
-          JOIN features f ON rf.feature_id = f.feature_id
-          WHERE rf.room_id = r.room_id AND f.is_active = 1
-        ) as features
-      FROM rooms r
-      JOIN room_types rt ON r.room_type_id = rt.room_type_id
+      SELECT * FROM rooms 
       ${whereClause}
-      ${availabilityJoin}
-      ORDER BY r.room_number
+      ORDER BY room_number
     `, params);
 
-const parsedRooms = rooms.map((room) => ({
-  ...room,
-  images: room.images ? JSON.parse(room.images) : [],
-  features: room.features ? JSON.parse(room.features) : [],
-}));
+    const parsedRooms = rooms.map((room) => ({
+      ...room,
+      images: room.images ? JSON.parse(room.images) : [],
+    }));
 
-res.json({
-  success: true,
-  count: parsedRooms.length,
-  rooms: parsedRooms,
-});
+    res.json({
+      success: true,
+      count: parsedRooms.length,
+      rooms: parsedRooms,
+    });
   } catch (error) {
     console.error("Get rooms error:", error);
     res.status(500).json({
@@ -94,73 +39,9 @@ res.json({
 
 export const getRoomById = async (req, res) => {
   try {
-    const { start_date, end_date } = req.query;
-    
-    let availabilityCheck = "";
-    const params = [req.params.id];
-    
-    // If checking availability for specific dates
-    if (start_date && end_date) {
-      availabilityCheck = `
-        AND r.room_id NOT IN (
-          SELECT DISTINCT br.room_id
-          FROM booking_rooms br
-          JOIN bookings b ON br.booking_id = b.booking_id
-          WHERE br.room_id = ? AND br.start_date < ? AND br.end_date > ?
-            AND b.status NOT IN ('CANCELLED', 'NO_SHOW')
-        )
-      `;
-      params.push(end_date, start_date);
-    }
-
     const [rooms] = await pool.query(`
-      SELECT 
-        r.*,
-        rt.name as room_type_name,
-        rt.base_capacity,
-        rt.max_capacity,
-        rt.base_price,
-        rt.description as room_type_description,
-        (
-          SELECT JSON_ARRAYAGG(
-            JSON_OBJECT(
-              'image_id', ri.image_id,
-              'image_url', ri.image_url,
-              'sort_order', ri.sort_order
-            )
-          )
-          FROM room_images ri
-          WHERE ri.room_id = r.room_id
-          ORDER BY ri.sort_order
-        ) as images,
-        (
-          SELECT JSON_ARRAYAGG(
-            JSON_OBJECT(
-              'feature_name', f.name,
-              'value_bool', rf.value_bool,
-              'value_text', rf.value_text,
-              'value_number', rf.value_number
-            )
-          )
-          FROM room_features rf
-          JOIN features f ON rf.feature_id = f.feature_id
-          WHERE rf.room_id = r.room_id AND f.is_active = 1
-        ) as features,
-        ${start_date && end_date ? `
-        (
-          SELECT COUNT(*) = 0
-          FROM booking_rooms br
-          JOIN bookings b ON br.booking_id = b.booking_id
-          WHERE br.room_id = r.room_id 
-            AND br.start_date < ? AND br.end_date > ?
-            AND b.status NOT IN ('CANCELLED', 'NO_SHOW')
-        ) as is_available
-        ` : 'true as is_available'}
-      FROM rooms r
-      JOIN room_types rt ON r.room_type_id = rt.room_type_id
-      WHERE r.room_id = ?
-      ${availabilityCheck}
-    `, params);
+      SELECT * FROM rooms WHERE room_id = ?
+    `, [req.params.id]);
 
     if (rooms.length === 0) {
       return res.status(404).json({
@@ -173,7 +54,6 @@ export const getRoomById = async (req, res) => {
     
     // Parse JSON fields
     room.images = room.images ? JSON.parse(room.images) : [];
-    room.features = room.features ? JSON.parse(room.features) : [];
 
     res.json({
       success: true,
@@ -191,14 +71,11 @@ export const getRoomById = async (req, res) => {
 export const getRoomTypes = async (req, res) => {
   try {
     const [roomTypes] = await pool.query(`
-      SELECT 
-        rt.*,
-        COUNT(r.room_id) as room_count
-      FROM room_types rt
-      LEFT JOIN rooms r ON rt.room_type_id = r.room_type_id AND r.status = 'ACTIVE'
-      WHERE rt.is_active = 1
-      GROUP BY rt.room_type_id
-      ORDER BY rt.name
+      SELECT DISTINCT room_type as name, COUNT(*) as room_count
+      FROM rooms 
+      WHERE status = 'AVAILABLE'
+      GROUP BY room_type
+      ORDER BY room_type
     `);
 
     res.json({
@@ -216,7 +93,7 @@ export const getRoomTypes = async (req, res) => {
 
 export const getRoomAvailability = async (req, res) => {
   try {
-    const { start_date, end_date, room_type_id } = req.query;
+    const { start_date, end_date, room_type } = req.query;
 
     if (!start_date || !end_date) {
       return res.status(400).json({
@@ -225,44 +102,18 @@ export const getRoomAvailability = async (req, res) => {
       });
     }
 
-    let whereClause = "WHERE r.status = 'ACTIVE'";
-    const params = [end_date, start_date]; // For availability check
+    let whereClause = "WHERE status = 'AVAILABLE'";
+    const params = [];
     
-    if (room_type_id) {
-      whereClause += " AND r.room_type_id = ?";
-      params.push(room_type_id);
+    if (room_type) {
+      whereClause += " AND room_type = ?";
+      params.push(room_type);
     }
 
     const [availableRooms] = await pool.query(`
-      SELECT 
-        r.*,
-        rt.name as room_type_name,
-        rt.base_capacity,
-        rt.max_capacity,
-        rt.base_price,
-        (
-          SELECT JSON_ARRAYAGG(
-            JSON_OBJECT(
-              'image_id', ri.image_id,
-              'image_url', ri.image_url,
-              'sort_order', ri.sort_order
-            )
-          )
-          FROM room_images ri
-          WHERE ri.room_id = r.room_id
-          ORDER BY ri.sort_order
-        ) as images
-      FROM rooms r
-      JOIN room_types rt ON r.room_type_id = rt.room_type_id
+      SELECT * FROM rooms 
       ${whereClause}
-      AND r.room_id NOT IN (
-        SELECT DISTINCT br.room_id
-        FROM booking_rooms br
-        JOIN bookings b ON br.booking_id = b.booking_id
-        WHERE br.start_date < ? AND br.end_date > ?
-          AND b.status NOT IN ('CANCELLED', 'NO_SHOW')
-      )
-      ORDER BY r.room_number
+      ORDER BY room_number
     `, params);
 
     // Parse images for each room

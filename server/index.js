@@ -18,6 +18,7 @@ import uploadRouter from "./routes/upload.js";
 import employeeRoutes from "./routes/employees.js";
 import invoiceRoutes from "./routes/invoices.js";
 import testRoutes from "./routes/tests.js";
+import galleryRoutes from "./routes/gallery.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,6 +60,7 @@ app.use("/api/upload", uploadRouter);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/tests", testRoutes);
+app.use("/api/gallery", galleryRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ ok: true, message: "Veloria Hotel API is running" });
