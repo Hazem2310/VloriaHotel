@@ -172,26 +172,6 @@ const Gallery = () => {
         </div>
       </div>
 
-      {/* Stats Bar */}
-      <div className={styles.statsBar}>
-        <div className={styles.stat}>
-          <span className={styles.statNumber}>{stats.total || 0}</span>
-          <span className={styles.statLabel}>Total Images</span>
-        </div>
-        <div className={styles.stat}>
-          <span className={styles.statNumber}>{stats.rooms || 0}</span>
-          <span className={styles.statLabel}>Rooms</span>
-        </div>
-        <div className={styles.stat}>
-          <span className={styles.statNumber}>{stats.halls || 0}</span>
-          <span className={styles.statLabel}>Halls</span>
-        </div>
-        <div className={styles.stat}>
-          <span className={styles.statNumber}>{stats.restaurants || 0}</span>
-          <span className={styles.statLabel}>Restaurants</span>
-        </div>
-      </div>
-
       {/* Error Message */}
       {error && (
         <div className={styles.errorContainer}>
