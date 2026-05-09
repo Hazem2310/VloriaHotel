@@ -1,3 +1,4 @@
+//apiClient
 const API_BASE_URL = "http://localhost:5000/api";
 
 // קרא JSON בבטחה גם אם התגובה ריקה

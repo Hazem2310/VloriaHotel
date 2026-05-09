@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../dbSingleton.js";
 
 // Get all meal packages
 export const getAllMealPackages = async (req, res) => {

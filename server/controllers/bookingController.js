@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../dbSingleton.js";
 
 // Helper function to check room availability for date range
 export const checkRoomAvailability = async (roomId, startDate, endDate, excludeBookingId = null) => {

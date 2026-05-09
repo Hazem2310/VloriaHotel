@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../dbSingleton.js";
 
 // Test function to verify no double booking is possible
 export const testDoubleBookingPrevention = async (req, res) => {

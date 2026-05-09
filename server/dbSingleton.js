@@ -1,30 +1,24 @@
-// server/dbSingleton.js
 import mysql from "mysql2/promise";
 
-class DatabaseSingleton {
-  constructor() {
-    this.pool = mysql.createPool({
-      host: "localhost",
-      user: "root",
-      password: "",
-      database: "veloria_grand_hotel",
-      waitForConnections: true,
-      connectionLimit: 10,
-    });
+const pool = mysql.createPool({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "veloria_grand_hotel",
+});
+
+export const testConnection = async () => {
+  try {
+    const connection = await pool.getConnection();
+
+    console.log("✅ Database connected");
+
+    connection.release();
+
+  } catch (error) {
+    console.log("❌ Database connection failed");
+    console.log(error);
   }
+};
 
-  query(sql, values) {
-    return this.pool.query(sql, values);
-  }
-
-  static instance;
-
-  static getInstance() {
-    if (!DatabaseSingleton.instance) {
-      DatabaseSingleton.instance = new DatabaseSingleton();
-    }
-    return DatabaseSingleton.instance;
-  }
-}
-
-export default DatabaseSingleton;
+export default pool;

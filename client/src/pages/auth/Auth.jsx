@@ -43,24 +43,20 @@ const Auth = () => {
 
     const result = await login(loginData.email, loginData.password);
 
-   if (result?.success) {
-  const role = result?.user?.role; // مثلاً: "admin" / "owner" / "customer"
-  const roles = result?.user?.roles || []; // array اختياري
+    if (result?.success) {
+      const role = result?.user?.role;
 
-  const isAdminLike =
-    role === "admin" ||
-    role === "owner" ||
-    roles.includes("admin") ||
-    roles.includes("owner");
-
-  if (isAdminLike) {
-    navigate("/admin/dashboard"); // ✅ صفحة الأدمن
-  } else {
-    navigate("/"); // ✅ العميل العادي
-  }
-
-}
-
+      // Redirect based on role
+      if (role === "admin" || role === "owner") {
+        navigate("/admin");
+      } else if (role === "manager") {
+        navigate("/manager");
+      } else if (role === "employee") {
+        navigate("/employee");
+      } else {
+        navigate("/"); // customer
+      }
+    }
 
     setLoading(false);
   };
@@ -87,7 +83,7 @@ const Auth = () => {
       signupData.last_name,
       signupData.email,
       signupData.password,
-      signupData.phone_number
+      signupData.phone_number,
     );
 
     if (result?.success) {
@@ -176,7 +172,11 @@ const Auth = () => {
 
               {error && <div className={classes.errorMessage}>{error}</div>}
 
-              <button type="submit" className={classes.submitBtn} disabled={loading}>
+              <button
+                type="submit"
+                className={classes.submitBtn}
+                disabled={loading}
+              >
                 {loading ? "Logging in..." : "Login"}
               </button>
 
@@ -263,9 +263,15 @@ const Auth = () => {
               </div>
 
               {error && <div className={classes.errorMessage}>{error}</div>}
-              {success && <div className={classes.successMessage}>{success}</div>}
+              {success && (
+                <div className={classes.successMessage}>{success}</div>
+              )}
 
-              <button type="submit" className={classes.submitBtn} disabled={loading}>
+              <button
+                type="submit"
+                className={classes.submitBtn}
+                disabled={loading}
+              >
                 {loading ? "Creating account..." : "Create Account"}
               </button>
             </form>

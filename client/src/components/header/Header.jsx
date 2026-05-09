@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import LanguageSwitcher from "../LanguageSwitcher/LanguageSwitcher";
 import style from "./header.module.css";
+import logo from "../../assets/img/logo.png";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -13,62 +14,40 @@ export default function Header() {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
 
-  // Normalize roles from backend
-  const userRoles = useMemo(() => {
-    if (!user) return [];
+  // 🔹 role from backend
+  const role = (user?.role || "").toLowerCase();
 
-    if (Array.isArray(user.roles)) {
-      return user.roles.map((r) =>
-        typeof r === "string" ? r.toLowerCase() : String(r?.role_name || "").toLowerCase()
-      );
-    }
+  // 🔹 role conditions
+  const isCustomer = role === "customer";
+  const isEmployee = role === "employee";
+  const isManager = role === "manager";
+  const isAdmin = role === "admin";
+  const isOwner = role === "owner";
 
-    if (user.role) {
-      return [String(user.role).toLowerCase()];
-    }
-
-    if (user.role_name) {
-      return [String(user.role_name).toLowerCase()];
-    }
-
-    return [];
-  }, [user]);
-
-  const isCustomer = userRoles.includes("customer");
-  const isEmployee = userRoles.includes("employee");
-  const isDeptManager = userRoles.includes("dept_manager");
-  const isAdmin = userRoles.includes("admin");
-  const isOwner = userRoles.includes("owner");
-
-  const isStaff = isEmployee || isDeptManager || isAdmin || isOwner;
+  const isStaff = isManager || isAdmin || isOwner;
+  const isEmployeeOnly = isEmployee && !isStaff;
   const isGuest = !user;
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setBookingDropdown(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const closeAll = () => {
     setOpen(false);
     setBookingDropdown(false);
   };
 
-  const displayName =
-    user?.name ||
-    `${user?.first_name || ""} ${user?.last_name || ""}`.trim() ||
-    user?.email ||
-    "User";
+  const displayName = user?.first_name || user?.name || user?.email || "User";
 
   return (
     <header className={style.header}>
+      {/* LOGO */}
+      <Link to="/" className={style.logoLink}>
+        <img src={logo} alt="Veloria Hotel" className={style.logo} />
+      </Link>
+
       <div className={style.container}>
-        <Link to={isStaff ? "/admin" : "/"} className={style.brand} aria-label="Veloria Hotel Home">
+        {/* BRAND */}
+        <Link
+          to={isStaff ? "/admin" : isEmployeeOnly ? "/employee" : "/"}
+          className={style.brand}
+        >
           <span className={style.brandMark}>V</span>
           <span className={style.brandText}>
             <span className={style.brandName}>Veloria</span>
@@ -76,221 +55,206 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className={style.nav} aria-label="Main navigation">
+        {/* NAV */}
+        <nav className={style.nav}>
+          {/* 🟢 GUEST + CUSTOMER */}
           {(isGuest || isCustomer) && (
             <>
-              <Link className={style.link} to="/">
-                {t("home")}
+              <Link to="/" className={style.link}>
+                Home
               </Link>
 
               <div className={style.dropdown} ref={dropdownRef}>
                 <button
                   className={style.dropdownToggle}
                   onClick={() => setBookingDropdown(!bookingDropdown)}
-                  aria-expanded={bookingDropdown}
-                  type="button"
                 >
-                  Booking <span className={style.arrow}>▼</span>
+                  Booking ▼
                 </button>
 
                 {bookingDropdown && (
                   <div className={style.dropdownMenu}>
-                    <Link
-                      to="/rooms"
-                      className={style.dropdownItem}
-                      onClick={() => setBookingDropdown(false)}
-                    >
-                      <span className={style.dropdownIcon}>🛏️</span>
-                      Rooms Booking
+                    <Link to="/rooms" onClick={closeAll}>
+                      Rooms
                     </Link>
-
-                    <Link
-                      to="/halls"
-                      className={style.dropdownItem}
-                      onClick={() => setBookingDropdown(false)}
-                    >
-                      <span className={style.dropdownIcon}>🏛️</span>
-                      Halls Booking
+                    <Link to="/halls" onClick={closeAll}>
+                      Halls
                     </Link>
-
-                    <Link
-                      to="/restaurant"
-                      className={style.dropdownItem}
-                      onClick={() => setBookingDropdown(false)}
-                    >
-                      <span className={style.dropdownIcon}>🍽️</span>
-                      Restaurant Reservation
+                    <Link to="/restaurant" onClick={closeAll}>
+                      Restaurant
                     </Link>
                   </div>
                 )}
               </div>
 
-              <Link className={style.link} to="/gallery">
+              <Link to="/gallery" className={style.link}>
                 Gallery
               </Link>
-
-              <Link className={style.link} to="/contact">
-                {t("contact")}
+              <Link to="/contact" className={style.link}>
+                Contact
               </Link>
             </>
           )}
 
-          {isCustomer && (
-            <Link className={style.link} to="/my-bookings">
-              {t("myBookings")}
-            </Link>
-          )}
-
-          {isStaff && (
+          {/* 👷 EMPLOYEE ONLY */}
+          {isEmployeeOnly && (
             <>
-              <Link className={style.link} to="/admin">
+              <Link to="/employee" className={style.link}>
                 Dashboard
               </Link>
-
-              <Link className={style.link} to="/admin/rooms">
-                Manage Rooms
+              <Link to="/employee/tasks" className={style.link}>
+                My Tasks
               </Link>
-
-              <Link className={style.link} to="/admin/manage-bookings">
-                Manage Bookings
+              <Link to="/employee/schedule" className={style.link}>
+                Schedule
               </Link>
+              <Link to="/employee/salary" className={style.link}>
+                Salary
+              </Link>
+              <Link to="/employee/messages" className={style.link}>
+                Messages
+              </Link>
+            </>
+          )}
 
-              {(isDeptManager || isAdmin || isOwner) && (
-                <Link className={style.link} to="/admin/manage-employees">
-                  Manage Employees
-                </Link>
-              )}
+          {/* 👨‍💼 DEPT MANAGER */}
+          {isManager && (
+            <>
+              <Link to="/manager" className={style.link}>
+                Dashboard
+              </Link>
+              <Link to="/manager/employees" className={style.link}>
+                Employees
+              </Link>
+              <Link to="/manager/tasks" className={style.link}>
+                Tasks
+              </Link>
+              <Link to="/manager/schedule" className={style.link}>
+                Schedule
+              </Link>
+              <Link to="/manager/messages" className={style.link}>
+                Messages
+              </Link>
+              <Link to="/manager/requests" className={style.link}>
+                Requests
+              </Link>
+              <Link to="/manager/salaries" className={style.link}>
+                Salaries
+              </Link>
+            </>
+          )}
 
-              {isOwner && (
-                <Link className={style.link} to="/admin/owner">
-                  Owner Panel
-                </Link>
-              )}
+          {/* 🔴 ADMIN / OWNER */}
+          {(isAdmin || isOwner) && (
+            <>
+              <Link to="/admin" className={style.link}>
+                Admin Dashboard
+              </Link>
+              <Link to="/admin/rooms" className={style.link}>
+                Rooms
+              </Link>
+              <Link to="/admin/bookings" className={style.link}>
+                Bookings
+              </Link>
+              <Link to="/admin/employees" className={style.link}>
+                Employees
+              </Link>
             </>
           )}
         </nav>
 
-        {/* Actions */}
+        {/* ACTIONS */}
         <div className={style.actions}>
           <LanguageSwitcher />
 
           {user ? (
             <>
               <span className={style.userName}>{displayName}</span>
-              <button className={style.secondaryBtn} onClick={logout} type="button">
-                {t("logout")}
+              <button onClick={logout} className={style.secondaryBtn}>
+                Logout
               </button>
             </>
           ) : (
-            <Link className={style.primaryBtn} to="/auth">
-              {t("login")}
+            <Link to="/auth" className={style.primaryBtn}>
+              Login
             </Link>
           )}
 
-          <button
-            className={style.menuBtn}
-            onClick={() => setOpen(!open)}
-            aria-expanded={open}
-            aria-label="Toggle menu"
-            type="button"
-          >
-            <span className={style.menuLine} />
-            <span className={style.menuLine} />
-            <span className={style.menuLine} />
+          <button className={style.menuBtn} onClick={() => setOpen(!open)}>
+            ☰
           </button>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* MOBILE */}
       <div className={`${style.mobilePanel} ${open ? style.open : ""}`}>
         {(isGuest || isCustomer) && (
           <>
-            <Link className={style.mobileLink} to="/" onClick={closeAll}>
-              {t("home")}
+            <Link to="/" onClick={closeAll}>
+              Home
             </Link>
-
-            <div className={style.mobileBookingSection}>
-              <div className={style.mobileBookingTitle}>Booking</div>
-
-              <Link className={style.mobileSubLink} to="/rooms" onClick={closeAll}>
-                🛏️ Rooms Booking
-              </Link>
-
-              <Link className={style.mobileSubLink} to="/halls" onClick={closeAll}>
-                🏛️ Halls Booking
-              </Link>
-
-              <Link className={style.mobileSubLink} to="/restaurant" onClick={closeAll}>
-                🍽️ Restaurant Reservation
-              </Link>
-            </div>
-
-            <Link className={style.mobileLink} to="/gallery" onClick={closeAll}>
-              Gallery
+            <Link to="/rooms" onClick={closeAll}>
+              Rooms
             </Link>
-
-            <Link className={style.mobileLink} to="/contact" onClick={closeAll}>
-              {t("contact")}
+            <Link to="/halls" onClick={closeAll}>
+              Halls
+            </Link>
+            <Link to="/restaurant" onClick={closeAll}>
+              Restaurant
             </Link>
           </>
         )}
 
-        {isCustomer && (
-          <Link className={style.mobileLink} to="/my-bookings" onClick={closeAll}>
-            {t("myBookings")}
-          </Link>
-        )}
-
-        {isStaff && (
+        {isEmployeeOnly && (
           <>
-            <Link className={style.mobileLink} to="/admin" onClick={closeAll}>
+            <Link to="/employee" onClick={closeAll}>
               Dashboard
             </Link>
-
-            <Link className={style.mobileLink} to="/admin/manage-rooms" onClick={closeAll}>
-              Manage Rooms
+            <Link to="/employee/tasks" onClick={closeAll}>
+              Tasks
             </Link>
-
-            <Link className={style.mobileLink} to="/admin/manage-bookings" onClick={closeAll}>
-              Manage Bookings
+            <Link to="/employee/schedule" onClick={closeAll}>
+              Schedule
             </Link>
+            <Link to="/employee/salary" onClick={closeAll}>
+              Salary
+            </Link>
+            <Link to="/employee/messages" onClick={closeAll}>
+              Messages
+            </Link>
+          </>
+        )}
 
-            {(isDeptManager || isAdmin || isOwner) && (
-              <Link className={style.mobileLink} to="/admin/manage-employees" onClick={closeAll}>
-                Manage Employees
-              </Link>
-            )}
+        {isManager && (
+          <>
+            <Link to="/manager" onClick={closeAll}>
+              Dashboard
+            </Link>
+            <Link to="/manager/employees" onClick={closeAll}>
+              Employees
+            </Link>
+            <Link to="/manager/tasks" onClick={closeAll}>
+              Tasks
+            </Link>
+            <Link to="/manager/requests" onClick={closeAll}>
+              Requests
+            </Link>
+          </>
+        )}
 
-            {isOwner && (
-              <Link className={style.mobileLink} to="/admin/owner" onClick={closeAll}>
-                Owner Panel
-              </Link>
-            )}
+        {(isAdmin || isOwner) && (
+          <>
+            <Link to="/admin" onClick={closeAll}>
+              Admin
+            </Link>
           </>
         )}
 
         <div className={style.mobileActions}>
-          <LanguageSwitcher />
-
           {user ? (
-            <>
-              <span className={style.userName}>{displayName}</span>
-              <button
-                className={style.secondaryBtn}
-                onClick={() => {
-                  logout();
-                  setOpen(false);
-                }}
-                type="button"
-              >
-                {t("logout")}
-              </button>
-            </>
+            <button onClick={logout}>Logout</button>
           ) : (
-            <Link className={style.primaryBtn} to="/auth" onClick={() => setOpen(false)}>
-              {t("login")}
-            </Link>
+            <Link to="/auth">Login</Link>
           )}
         </div>
       </div>

@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../dbSingleton.js";
 
 export const getReports = async (req, res) => {
   try {

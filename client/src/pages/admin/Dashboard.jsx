@@ -162,17 +162,17 @@ const Dashboard = () => {
       <div className={styles.quickActions}>
         <h2>Quick Actions</h2>
         <div className={styles.actionsGrid}>
-          <Link to="/admin/manage-rooms" className={styles.actionCard}>
+          <Link to="/admin/rooms" className={styles.actionCard}>
             <span className={styles.actionIcon}>🏨</span>
             <span>Manage Rooms</span>
           </Link>
 
-          <Link to="/admin/manage-bookings" className={styles.actionCard}>
+          <Link to="/admin/bookings" className={styles.actionCard}>
             <span className={styles.actionIcon}>📋</span>
             <span>Manage Bookings</span>
           </Link>
 
-          <Link to="/admin/manage-rooms" className={styles.actionCard}>
+          <Link to="/admin/rooms" className={styles.actionCard}>
             <span className={styles.actionIcon}>🛠️</span>
             <span>Room Availability</span>
           </Link>

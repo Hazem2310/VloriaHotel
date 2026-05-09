@@ -1,4 +1,4 @@
-import pool from "../config/db.js";
+import pool from "../dbSingleton.js";
 
 // Helper function to calculate booking total
 export const calculateBookingTotal = async (bookingId) => {

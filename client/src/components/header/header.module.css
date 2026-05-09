@@ -15,7 +15,17 @@
   box-shadow: 0 2px 8px rgba(167, 146, 119, 0.1);
 
 }
+.logo {
+  height: 55px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
+.logo:hover {
+  transform: scale(1.05);
+}
 
 
 .container{

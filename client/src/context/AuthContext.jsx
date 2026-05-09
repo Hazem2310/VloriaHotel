@@ -23,23 +23,47 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const checkAuth = async () => {
+      const token = sessionStorage.getItem("token");
+
+      // NO TOKEN - don't call /me
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await api.get("/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setUser(response.data.user);
+      } catch (error) {
+        console.log(error);
+
+        // Handle 401 Unauthorized - remove invalid token
+        if (error.response?.status === 401) {
+          sessionStorage.removeItem("token");
+          sessionStorage.removeItem("user");
+          setUser(null);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
     checkAuth();
   }, []);
 
-  const checkAuth = async () => {
-    try {
-      const response = await api.get("/auth/me");
-      if (response.data.success) {
-        setUser(response.data.user);
-      }
-    } catch (error) {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const register = async (first_name, last_name, email, password, phone_number) => {
+  const register = async (
+    first_name,
+    last_name,
+    email,
+    password,
+    phone_number,
+  ) => {
     try {
       const response = await api.post("/auth/register", {
         first_name,
@@ -50,7 +74,6 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (response.data?.success) {
-        // لا تعملي setUser هون إذا بدك بعد التسجيل تروحي Login
         return { success: true, message: response.data.message };
       }
     } catch (error) {
@@ -66,25 +89,30 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
- const login = async (email, password) => {
-  try {
-    const response = await api.post("/auth/login", { email, password });
+  const login = async (email, password) => {
+    try {
+      const response = await api.post("/auth/login", { email, password });
 
-    if (response.data?.success) {
-      setUser(response.data.user);
+      if (response.data?.success) {
+        setUser(response.data.user);
 
-      // ✅ رجّعي اليوزر مع النتيجة عشان نقرر وين نودّيها
-      return { success: true, user: response.data.user };
+        // Save token to sessionStorage
+        sessionStorage.setItem("token", response.data.token);
+
+        return { success: true, user: response.data.user };
+      }
+
+      return {
+        success: false,
+        message: response.data?.message || "Login failed",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || "Login failed",
+      };
     }
-
-    return { success: false, message: response.data?.message || "Login failed" };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.response?.data?.message || "Login failed",
-    };
-  }
-};
+  };
 
   const logout = async () => {
     try {
@@ -102,8 +130,8 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     isAuthenticated: !!user,
-isAdmin: user?.role === "admin" || user?.role === "owner" ||
-         user?.roles?.includes("admin") || user?.roles?.includes("owner")  };
+    isAdmin: user?.role === "admin" || user?.role === "owner",
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

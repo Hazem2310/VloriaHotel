@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
-import { testConnection } from "./config/db.js";
+import { testConnection } from "./dbSingleton.js";
 import authRoutes from "./routes/auth.js";
 import roomRoutes from "./routes/rooms.js";
 import serviceRoutes from "./routes/services.js";
@@ -15,10 +15,12 @@ import mealRoutes from "./routes/mealRoutes.js";
 import mealPackageRoutes from "./routes/mealPackageRoutes.js";
 import aiRoutes from "./routes/ai.js";
 import uploadRouter from "./routes/upload.js";
-import employeeRoutes from "./routes/employees.js";
 import invoiceRoutes from "./routes/invoices.js";
-import testRoutes from "./routes/tests.js";
 import galleryRoutes from "./routes/gallery.js";
+import hallsRoutes from "./routes/hallsRoutes.js";
+
+import employeeRoutes from "./routes/employeeRoutes.js";
+import employeeTasksRoutes from "./routes/employeeTasksRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -57,10 +59,11 @@ app.use("/api/meal-packages", mealPackageRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/upload", uploadRouter);
-app.use("/api/employees", employeeRoutes);
 app.use("/api/invoices", invoiceRoutes);
-app.use("/api/tests", testRoutes);
 app.use("/api/gallery", galleryRoutes);
+app.use("/api/halls", hallsRoutes);
+app.use("/api/employee", employeeRoutes);
+app.use("/api/tasks", employeeTasksRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ ok: true, message: "Veloria Hotel API is running" });
