@@ -27,45 +27,50 @@ const Auth = () => {
   });
 
   const handleLoginChange = (e) => {
-    setLoginData({ ...loginData, [e.target.name]: e.target.value });
+    setLoginData({
+      ...loginData,
+      [e.target.name]: e.target.value,
+    });
     setError("");
   };
 
   const handleSignupChange = (e) => {
-    setSignupData({ ...signupData, [e.target.name]: e.target.value });
+    setSignupData({
+      ...signupData,
+      [e.target.name]: e.target.value,
+    });
     setError("");
   };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
+
     setError("");
+    setSuccess("");
     setLoading(true);
 
     const result = await login(loginData.email, loginData.password);
 
-   if (result?.success) {
-  const role = result?.user?.role; // مثلاً: "admin" / "owner" / "customer"
-  const roles = result?.user?.roles || []; // array اختياري
+    if (result?.success) {
+      const role = result?.user?.role?.toLowerCase() || "";
 
-  const isAdminLike =
-    role === "admin" ||
-    role === "owner" ||
-    roles.includes("admin") ||
-    roles.includes("owner");
-
-  if (isAdminLike) {
-    navigate("/admin/dashboard"); // ✅ صفحة الأدمن
-  } else {
-    navigate("/"); // ✅ العميل العادي
-  }
-
-}
-
+      if (role === "owner" || role === "admin") {
+        navigate("/admin", { replace: true });
+      } else if (role === "employee") {
+        navigate("/employee", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
+    } else {
+      setError(result?.message || "Login failed");
+    }
 
     setLoading(false);
   };
+
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
+
     setError("");
     setSuccess("");
     setLoading(true);
@@ -92,6 +97,7 @@ const Auth = () => {
 
     if (result?.success) {
       setSuccess("Account created successfully! Please login.");
+
       setSignupData({
         first_name: "",
         last_name: "",
@@ -116,17 +122,18 @@ const Auth = () => {
     <div className={classes.authPage}>
       <div className={classes.authContainer}>
         <div className={classes.authCard}>
-          {/* Header */}
           <div className={classes.authHeader}>
             <div className={classes.brandMark}>V</div>
             <h1>Veloria Hotel</h1>
             <p>Welcome to luxury and comfort</p>
           </div>
 
-          {/* Tabs */}
           <div className={classes.tabs}>
             <button
-              className={`${classes.tab} ${activeTab === "login" ? classes.activeTab : ""}`}
+              type="button"
+              className={`${classes.tab} ${
+                activeTab === "login" ? classes.activeTab : ""
+              }`}
               onClick={() => {
                 setActiveTab("login");
                 setError("");
@@ -135,8 +142,12 @@ const Auth = () => {
             >
               Login
             </button>
+
             <button
-              className={`${classes.tab} ${activeTab === "signup" ? classes.activeTab : ""}`}
+              type="button"
+              className={`${classes.tab} ${
+                activeTab === "signup" ? classes.activeTab : ""
+              }`}
               onClick={() => {
                 setActiveTab("signup");
                 setError("");
@@ -147,7 +158,6 @@ const Auth = () => {
             </button>
           </div>
 
-          {/* Login Form */}
           {activeTab === "login" && (
             <form className={classes.authForm} onSubmit={handleLoginSubmit}>
               <div className={classes.formGroup}>
@@ -176,7 +186,11 @@ const Auth = () => {
 
               {error && <div className={classes.errorMessage}>{error}</div>}
 
-              <button type="submit" className={classes.submitBtn} disabled={loading}>
+              <button
+                type="submit"
+                className={classes.submitBtn}
+                disabled={loading}
+              >
                 {loading ? "Logging in..." : "Login"}
               </button>
 
@@ -186,7 +200,6 @@ const Auth = () => {
             </form>
           )}
 
-          {/* Signup Form */}
           {activeTab === "signup" && (
             <form className={classes.authForm} onSubmit={handleSignupSubmit}>
               <div className={classes.formRow}>
@@ -265,7 +278,11 @@ const Auth = () => {
               {error && <div className={classes.errorMessage}>{error}</div>}
               {success && <div className={classes.successMessage}>{success}</div>}
 
-              <button type="submit" className={classes.submitBtn} disabled={loading}>
+              <button
+                type="submit"
+                className={classes.submitBtn}
+                disabled={loading}
+              >
                 {loading ? "Creating account..." : "Create Account"}
               </button>
             </form>

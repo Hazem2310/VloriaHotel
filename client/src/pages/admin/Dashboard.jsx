@@ -3,14 +3,29 @@ import { Link } from "react-router-dom";
 import { reportsAPI } from "../../Api/reportsApi";
 import { useLanguage } from "../../context/LanguageContext";
 import styles from "./Dashboard.module.css";
+import { employeeSchedulesAPI } from "../../Api/employeeSchedulesApi";
 
 const Dashboard = () => {
   const [reports, setReports] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [employees, setEmployees] = useState([]);
+  const [schedules, setSchedules] = useState([]);
+  const [scheduleLoading, setScheduleLoading] = useState(false);
+  const [scheduleMessage, setScheduleMessage] = useState("");
+
+  const [formData, setFormData] = useState({
+    employee_id: "",
+    work_date: "",
+    start_time: "",
+    end_time: "",
+  });
+
   const { t } = useLanguage();
 
   useEffect(() => {
     fetchReports();
+    fetchScheduleData();
   }, []);
 
   const fetchReports = async () => {
@@ -28,6 +43,96 @@ const Dashboard = () => {
     }
   };
 
+  const fetchScheduleData = async () => {
+    try {
+      setScheduleLoading(true);
+
+      const [employeesRes, schedulesRes] = await Promise.all([
+        employeeSchedulesAPI.getEmployees(),
+        employeeSchedulesAPI.getAll(),
+      ]);
+
+      if (employeesRes.data.success) {
+        setEmployees(employeesRes.data.employees || []);
+      }
+
+      if (schedulesRes.data.success) {
+        setSchedules(schedulesRes.data.schedules || []);
+      }
+    } catch (error) {
+      console.error("Error fetching schedule data:", error);
+    } finally {
+      setScheduleLoading(false);
+    }
+  };
+
+  const handleScheduleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    setScheduleMessage("");
+  };
+
+  const handleCreateSchedule = async (e) => {
+    e.preventDefault();
+
+    if (
+      !formData.employee_id ||
+      !formData.work_date ||
+      !formData.start_time ||
+      !formData.end_time
+    ) {
+      setScheduleMessage("Please fill all work arrangement fields.");
+      return;
+    }
+
+    try {
+      setScheduleLoading(true);
+
+      const res = await employeeSchedulesAPI.create({
+        employee_id: Number(formData.employee_id),
+        work_date: formData.work_date,
+        start_time: formData.start_time,
+        end_time: formData.end_time,
+      });
+
+      if (res.data.success) {
+        setScheduleMessage("Work arrangement added successfully.");
+        setFormData({
+          employee_id: "",
+          work_date: "",
+          start_time: "",
+          end_time: "",
+        });
+
+        await fetchScheduleData();
+      }
+    } catch (error) {
+      console.error("Error creating schedule:", error);
+      setScheduleMessage(
+        error.response?.data?.message || "Failed to add work arrangement."
+      );
+    } finally {
+      setScheduleLoading(false);
+    }
+  };
+
+  const handleDeleteSchedule = async (id) => {
+    const confirmed = window.confirm("Delete this work arrangement?");
+    if (!confirmed) return;
+
+    try {
+      setScheduleLoading(true);
+      await employeeSchedulesAPI.delete(id);
+      await fetchScheduleData();
+    } catch (error) {
+      console.error("Error deleting schedule:", error);
+    } finally {
+      setScheduleLoading(false);
+    }
+  };
+
   const formatCurrency = (value) => {
     return `$${Number(value || 0).toFixed(2)}`;
   };
@@ -39,7 +144,9 @@ const Dashboard = () => {
 
   const getBookingTitle = (booking) => {
     if (booking.booking_type === "ROOM") {
-      return `Room ${booking.room_number || "-"}${booking.room_type_name ? ` • ${booking.room_type_name}` : ""}`;
+      return `Room ${booking.room_number || "-"}${
+        booking.room_type_name ? ` • ${booking.room_type_name}` : ""
+      }`;
     }
 
     if (booking.booking_type === "HALL") {
@@ -47,7 +154,9 @@ const Dashboard = () => {
     }
 
     if (booking.booking_type === "RESTAURANT") {
-      return booking.restaurant_name ? `Restaurant • ${booking.restaurant_name}` : "Restaurant Booking";
+      return booking.restaurant_name
+        ? `Restaurant • ${booking.restaurant_name}`
+        : "Restaurant Booking";
     }
 
     return booking.booking_type;
@@ -55,7 +164,9 @@ const Dashboard = () => {
 
   const getBookingDate = (booking) => {
     if (booking.booking_type === "ROOM") {
-      return `${formatDate(booking.start_date)} → ${formatDate(booking.end_date)}`;
+      return `${formatDate(booking.start_date)} → ${formatDate(
+        booking.end_date
+      )}`;
     }
 
     if (booking.booking_type === "HALL") {
@@ -89,7 +200,9 @@ const Dashboard = () => {
           <div className={styles.statIcon}>💰</div>
           <div className={styles.statInfo}>
             <h3>{t("totalRevenue")}</h3>
-            <p className={styles.statValue}>{formatCurrency(reports?.totalRevenue)}</p>
+            <p className={styles.statValue}>
+              {formatCurrency(reports?.totalRevenue)}
+            </p>
           </div>
         </div>
 
@@ -113,7 +226,9 @@ const Dashboard = () => {
           <div className={styles.statIcon}>💵</div>
           <div className={styles.statInfo}>
             <h3>{t("averagePrice")}</h3>
-            <p className={styles.statValue}>{formatCurrency(reports?.averageBookingPrice)}</p>
+            <p className={styles.statValue}>
+              {formatCurrency(reports?.averageBookingPrice)}
+            </p>
           </div>
         </div>
       </div>
@@ -180,6 +295,151 @@ const Dashboard = () => {
       </div>
 
       <div className={styles.panelCard}>
+        <h2>Work Arrangement</h2>
+        <p className={styles.subtitle}>
+          Assign employee work date and shift hours.
+        </p>
+
+        <form
+          onSubmit={handleCreateSchedule}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gap: "16px",
+            marginTop: "20px",
+            marginBottom: "20px",
+          }}
+        >
+          <select
+            name="employee_id"
+            value={formData.employee_id}
+            onChange={handleScheduleChange}
+            style={{
+              padding: "14px",
+              borderRadius: "12px",
+              border: "1px solid #ddd",
+            }}
+          >
+            <option value="">Select Employee</option>
+            {employees.map((emp) => (
+              <option key={emp.employee_id} value={emp.employee_id}>
+                {emp.first_name} {emp.last_name} — {emp.job_title || emp.department}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="date"
+            name="work_date"
+            value={formData.work_date}
+            onChange={handleScheduleChange}
+            style={{
+              padding: "14px",
+              borderRadius: "12px",
+              border: "1px solid #ddd",
+            }}
+          />
+
+          <input
+            type="time"
+            name="start_time"
+            value={formData.start_time}
+            onChange={handleScheduleChange}
+            style={{
+              padding: "14px",
+              borderRadius: "12px",
+              border: "1px solid #ddd",
+            }}
+          />
+
+          <input
+            type="time"
+            name="end_time"
+            value={formData.end_time}
+            onChange={handleScheduleChange}
+            style={{
+              padding: "14px",
+              borderRadius: "12px",
+              border: "1px solid #ddd",
+            }}
+          />
+
+          <button
+            type="submit"
+            disabled={scheduleLoading}
+            style={{
+              padding: "14px",
+              borderRadius: "12px",
+              border: "none",
+              background: "#173b85",
+              color: "white",
+              fontWeight: "700",
+              cursor: "pointer",
+            }}
+          >
+            {scheduleLoading ? "Saving..." : "Add Arrangement"}
+          </button>
+        </form>
+
+        {scheduleMessage && (
+          <p style={{ color: "#173b85", fontWeight: "700" }}>
+            {scheduleMessage}
+          </p>
+        )}
+
+        {schedules.length > 0 ? (
+          <div className={styles.bookingsTable}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Department</th>
+                  <th>Job Title</th>
+                  <th>Date</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {schedules.map((s) => (
+                  <tr key={s.schedule_id}>
+                    <td>
+                      {s.first_name} {s.last_name}
+                    </td>
+                    <td>{s.department || "-"}</td>
+                    <td>{s.job_title || "-"}</td>
+                    <td>{formatDate(s.work_date)}</td>
+                    <td>{s.start_time}</td>
+                    <td>{s.end_time}</td>
+                    <td>
+                      <button
+                        onClick={() => handleDeleteSchedule(s.schedule_id)}
+                        style={{
+                          padding: "8px 12px",
+                          borderRadius: "10px",
+                          border: "none",
+                          background: "#b91c1c",
+                          color: "white",
+                          fontWeight: "700",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p>No work arrangements yet.</p>
+        )}
+      </div>
+
+      <div className={styles.panelCard}>
         <h2>Booking Status Breakdown</h2>
         {reports?.statusBreakdown?.length > 0 ? (
           <div className={styles.statusList}>
@@ -212,16 +472,23 @@ const Dashboard = () => {
                   <th>Total</th>
                 </tr>
               </thead>
+
               <tbody>
                 {reports.recentBookings.map((booking) => (
                   <tr key={booking.booking_id}>
                     <td>#{booking.booking_id}</td>
-                    <td>{booking.first_name} {booking.last_name}</td>
+                    <td>
+                      {booking.first_name} {booking.last_name}
+                    </td>
                     <td>{booking.booking_type}</td>
                     <td>{getBookingTitle(booking)}</td>
                     <td>{getBookingDate(booking)}</td>
                     <td>
-                      <span className={`${styles.status} ${styles[booking.status] || ""}`}>
+                      <span
+                        className={`${styles.status} ${
+                          styles[booking.status] || ""
+                        }`}
+                      >
                         {booking.status}
                       </span>
                     </td>

@@ -1583,3 +1583,19 @@
     font-size: 1rem;
   }
 }
+.amenityImageContainer {
+  background: linear-gradient(135deg, #ead8c0 0%, #a79277 100%);
+}
+
+.amenityImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.amenityIcon {
+  color: #a79277;
+  font-size: 2.4rem;
+  line-height: 1;
+}

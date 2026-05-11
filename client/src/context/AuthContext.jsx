@@ -5,9 +5,11 @@ const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
+
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
+
   return context;
 };
 
@@ -16,6 +18,16 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
 });
 
 export const AuthProvider = ({ children }) => {
@@ -29,17 +41,25 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       const response = await api.get("/auth/me");
+
       if (response.data.success) {
         setUser(response.data.user);
       }
     } catch (error) {
+      localStorage.removeItem("token");
       setUser(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const register = async (first_name, last_name, email, password, phone_number) => {
+  const register = async (
+    first_name,
+    last_name,
+    email,
+    password,
+    phone_number
+  ) => {
     try {
       const response = await api.post("/auth/register", {
         first_name,
@@ -50,50 +70,87 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (response.data?.success) {
-        // لا تعملي setUser هون إذا بدك بعد التسجيل تروحي Login
-        return { success: true, message: response.data.message };
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        }
+
+        return {
+          success: true,
+          message: response.data.message,
+          user: response.data.user,
+        };
       }
+
+      return {
+        success: false,
+        message: "Registration failed",
+      };
     } catch (error) {
-      console.log("REGISTER ERROR:", error);
-      console.log("REGISTER RESPONSE:", error.response);
       return {
         success: false,
         message:
           error.response?.data?.message ||
-          error.message || // 👈 هاي بتجيب CORS / Network Error
+          error.message ||
           "Registration failed",
       };
     }
   };
 
- const login = async (email, password) => {
-  try {
-    const response = await api.post("/auth/login", { email, password });
+  const login = async (email, password) => {
+    try {
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+      });
 
-    if (response.data?.success) {
-      setUser(response.data.user);
+      if (response.data?.success) {
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+        }
 
-      // ✅ رجّعي اليوزر مع النتيجة عشان نقرر وين نودّيها
-      return { success: true, user: response.data.user };
+        setUser(response.data.user);
+
+        return {
+          success: true,
+          user: response.data.user,
+          token: response.data.token,
+        };
+      }
+
+      return {
+        success: false,
+        message: response.data?.message || "Login failed",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || "Login failed",
+      };
     }
-
-    return { success: false, message: response.data?.message || "Login failed" };
-  } catch (error) {
-    return {
-      success: false,
-      message: error.response?.data?.message || "Login failed",
-    };
-  }
-};
+  };
 
   const logout = async () => {
     try {
       await api.post("/auth/logout");
-      setUser(null);
     } catch (error) {
       console.error("Logout error:", error);
+    } finally {
+      localStorage.removeItem("token");
+      setUser(null);
     }
   };
+
+  const normalizedRole = user?.role?.toLowerCase() || "";
+  const normalizedRoles = user?.roles?.map((r) => r.toLowerCase()) || [];
+
+  const isAdmin =
+    normalizedRole === "admin" ||
+    normalizedRole === "owner" ||
+    normalizedRoles.includes("admin") ||
+    normalizedRoles.includes("owner");
+
+  const isEmployee =
+    normalizedRole === "employee" || normalizedRoles.includes("employee");
 
   const value = {
     user,
@@ -101,9 +158,11 @@ export const AuthProvider = ({ children }) => {
     register,
     login,
     logout,
+    checkAuth,
     isAuthenticated: !!user,
-isAdmin: user?.role === "admin" || user?.role === "owner" ||
-         user?.roles?.includes("admin") || user?.roles?.includes("owner")  };
+    isAdmin,
+    isEmployee,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

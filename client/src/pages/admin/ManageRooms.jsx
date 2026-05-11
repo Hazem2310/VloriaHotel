@@ -4,6 +4,7 @@ import { useLanguage } from "../../context/LanguageContext";
 import styles from "./ManageRooms.module.css";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+
 const initialFormData = {
   room_number: "",
   room_type_id: "",
@@ -13,6 +14,10 @@ const initialFormData = {
   notes: "",
   status: "ACTIVE",
   image_url: "",
+};
+
+const getApiData = (res) => {
+  return res?.data || res || {};
 };
 
 const ManageRooms = () => {
@@ -37,17 +42,21 @@ const ManageRooms = () => {
   const fetchInitialData = async () => {
     try {
       setLoading(true);
+
       const [roomsRes, typesRes] = await Promise.all([
         roomsAPI.getAll("?status=ALL"),
         roomsAPI.getTypes(),
       ]);
 
-      if (roomsRes.data.success) {
-        setRooms(roomsRes.data.rooms || []);
+      const roomsData = getApiData(roomsRes);
+      const typesData = getApiData(typesRes);
+
+      if (roomsData?.success) {
+        setRooms(roomsData.rooms || []);
       }
 
-      if (typesRes.data.success) {
-        setRoomTypes(typesRes.data.room_types || []);
+      if (typesData?.success) {
+        setRoomTypes(typesData.room_types || []);
       }
     } catch (error) {
       console.error("Error fetching initial data:", error);
@@ -59,11 +68,15 @@ const ManageRooms = () => {
   const fetchRooms = async () => {
     try {
       setLoading(true);
-      const query = statusFilter === "ALL" ? "?status=ALL" : `?status=${statusFilter}`;
-      const response = await roomsAPI.getAll(query);
 
-      if (response.data.success) {
-        setRooms(response.data.rooms || []);
+      const query =
+        statusFilter === "ALL" ? "?status=ALL" : `?status=${statusFilter}`;
+
+      const response = await roomsAPI.getAll(query);
+      const data = getApiData(response);
+
+      if (data?.success) {
+        setRooms(data.rooms || []);
       }
     } catch (error) {
       console.error("Error fetching rooms:", error);
@@ -119,7 +132,9 @@ const ManageRooms = () => {
         floor: formData.floor === "" ? null : Number(formData.floor),
         extra_bed_allowed: formData.extra_bed_allowed,
         extra_bed_price:
-          formData.extra_bed_price === "" ? 0 : Number(formData.extra_bed_price),
+          formData.extra_bed_price === ""
+            ? 0
+            : Number(formData.extra_bed_price),
         notes: formData.notes || null,
         status: formData.status,
       };
@@ -130,13 +145,20 @@ const ManageRooms = () => {
         await roomsAPI.update(editingRoom.room_id, payload);
       } else {
         const createRes = await roomsAPI.create(payload);
-        roomId = createRes?.data?.room?.room_id;
+        const createData = getApiData(createRes);
+
+        roomId =
+          createData?.room?.room_id ||
+          createData?.room_id ||
+          createData?.id ||
+          createData?.insertId;
       }
 
-      // add image only if provided and room exists
       if (formData.image_url && roomId) {
         try {
-await fetch(`${API_URL}/rooms/${roomId}/images`, {            headers: {
+          await fetch(`${API_URL}/rooms/${roomId}/images`, {
+            method: "POST",
+            headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
             },
@@ -181,23 +203,30 @@ await fetch(`${API_URL}/rooms/${roomId}/images`, {            headers: {
     return styles[normalized] || "";
   };
 
-  const getMainImage = (room) => {
-    if (Array.isArray(room.images) && room.images.length > 0) {
-      return room.images[0]?.image_url;
-    }
-    return "";
-  };
+const getMainImage = (room) => {
+  if (Array.isArray(room.images) && room.images.length > 0) {
+    const firstImage = room.images[0];
 
-  if (loading) {
-    return <div className={styles.loading}>{t("loading")}</div>;
+    if (typeof firstImage === "string") {
+      return firstImage.startsWith("http")
+        ? firstImage
+        : `http://localhost:5000${firstImage}`;
+    }
+
+    return firstImage.image_url || firstImage.url || "";
   }
+
+  return "";
+};
 
   return (
     <div className={styles.manageRooms}>
       <div className={styles.header}>
         <div>
           <h1>{t("manageRooms")}</h1>
-          <p className={styles.subtitle}>Manage hotel rooms, status, and room details</p>
+          <p className={styles.subtitle}>
+            Manage hotel rooms, status, and room details
+          </p>
         </div>
 
         <div className={styles.headerActions}>
@@ -219,67 +248,83 @@ await fetch(`${API_URL}/rooms/${roomId}/images`, {            headers: {
       </div>
 
       <div className={styles.roomsGrid}>
-        {rooms.map((room) => {
-          const imageUrl = getMainImage(room);
+        {rooms.length === 0 ? (
+          <div className={styles.noImage}>No rooms found</div>
+        ) : (
+          rooms.map((room) => {
+            const imageUrl = getMainImage(room);
 
-          return (
-            <div key={room.room_id} className={styles.roomCard}>
-              <div className={styles.roomImage}>
-                {imageUrl ? (
-                  <img src={imageUrl} alt={`Room ${room.room_number}`} />
-                ) : (
-                  <div className={styles.noImage}>No Image</div>
-                )}
+            return (
+              <div key={room.room_id} className={styles.roomCard}>
+                <div className={styles.roomImage}>
+                  {imageUrl ? (
+                    <img src={imageUrl} alt={`Room ${room.room_number}`} />
+                  ) : (
+                    <div className={styles.noImage}>No Image</div>
+                  )}
+                </div>
+
+                <div className={styles.roomInfo}>
+                  <div className={styles.topRow}>
+                    <h3>Room {room.room_number}</h3>
+                    <span
+                      className={`${styles.statusBadge} ${getStatusClass(
+                        room.status
+                      )}`}
+                    >
+                      {room.status}
+                    </span>
+                  </div>
+
+                  <p className={styles.roomType}>{room.room_type_name}</p>
+
+                  <p className={styles.description}>
+                    {room.room_type_description ||
+                      room.notes ||
+                      "No description available"}
+                  </p>
+
+                  <div className={styles.roomDetails}>
+                    <span>Floor: {room.floor ?? "-"}</span>
+                    <span>
+                      Base Price: ${Number(room.base_price || 0).toFixed(2)}
+                    </span>
+                    <span>
+                      Capacity: {room.base_capacity || "-"} -{" "}
+                      {room.max_capacity || "-"}
+                    </span>
+                  </div>
+
+                  <div className={styles.roomDetails}>
+                    <span>
+                      Extra Bed: {room.extra_bed_allowed ? "Yes" : "No"}
+                    </span>
+                    <span>
+                      Extra Bed Price: $
+                      {Number(room.extra_bed_price || 0).toFixed(2)}
+                    </span>
+                  </div>
+
+                  <div className={styles.actions}>
+                    <button
+                      onClick={() => openModal(room)}
+                      className={styles.editBtn}
+                    >
+                      {t("edit")}
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(room.room_id)}
+                      className={styles.deleteBtn}
+                    >
+                      Deactivate
+                    </button>
+                  </div>
+                </div>
               </div>
-
-              <div className={styles.roomInfo}>
-                <div className={styles.topRow}>
-                  <h3>Room {room.room_number}</h3>
-                  <span className={`${styles.statusBadge} ${getStatusClass(room.status)}`}>
-                    {room.status}
-                  </span>
-                </div>
-
-                <p className={styles.roomType}>{room.room_type_name}</p>
-
-                <p className={styles.description}>
-                  {room.room_type_description || room.notes || "No description available"}
-                </p>
-
-                <div className={styles.roomDetails}>
-                  <span>Floor: {room.floor ?? "-"}</span>
-                  <span>Base Price: ${Number(room.base_price || 0).toFixed(2)}</span>
-                  <span>Capacity: {room.base_capacity} - {room.max_capacity}</span>
-                </div>
-
-                <div className={styles.roomDetails}>
-                  <span>
-                    Extra Bed: {room.extra_bed_allowed ? "Yes" : "No"}
-                  </span>
-                  <span>
-                    Extra Bed Price: ${Number(room.extra_bed_price || 0).toFixed(2)}
-                  </span>
-                </div>
-
-                <div className={styles.actions}>
-                  <button
-                    onClick={() => openModal(room)}
-                    className={styles.editBtn}
-                  >
-                    {t("edit")}
-                  </button>
-
-                  <button
-                    onClick={() => handleDelete(room.room_id)}
-                    className={styles.deleteBtn}
-                  >
-                    Deactivate
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
 
       {showModal && (
@@ -294,7 +339,9 @@ await fetch(`${API_URL}/rooms/${roomId}/images`, {            headers: {
                   <input
                     type="text"
                     value={formData.room_number}
-                    onChange={(e) => handleChange("room_number", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("room_number", e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -303,7 +350,9 @@ await fetch(`${API_URL}/rooms/${roomId}/images`, {            headers: {
                   <label>Room Type</label>
                   <select
                     value={formData.room_type_id}
-                    onChange={(e) => handleChange("room_type_id", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("room_type_id", e.target.value)
+                    }
                     required
                   >
                     <option value="">Select room type</option>
@@ -346,7 +395,9 @@ await fetch(`${API_URL}/rooms/${roomId}/images`, {            headers: {
                   <input
                     type="number"
                     value={formData.extra_bed_price}
-                    onChange={(e) => handleChange("extra_bed_price", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("extra_bed_price", e.target.value)
+                    }
                     min="0"
                     step="0.01"
                   />
@@ -394,7 +445,11 @@ await fetch(`${API_URL}/rooms/${roomId}/images`, {            headers: {
                   {t("cancel")}
                 </button>
 
-                <button type="submit" className={styles.saveBtn} disabled={saving}>
+                <button
+                  type="submit"
+                  className={styles.saveBtn}
+                  disabled={saving}
+                >
                   {saving ? "Saving..." : t("save")}
                 </button>
               </div>
